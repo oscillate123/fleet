@@ -16,6 +16,6 @@ public class Ship {
         String tiles = "  Ship   | Cargocapacity | coordinates";
         Ship myShip = new Ship("ship one", 100,1, 1);
         System.out.println(tiles);
-        System.out.println(myShip.name + " |    " + myShip.cargoCapacity + "        |     " + "x"+myShip.xAxis + " y"+myShip.yAxis);
+        System.out.println(myShip.name + " |      " + myShip.cargoCapacity + "      |  " + "x:"+myShip.xAxis + " y:"+myShip.yAxis);
     }
 }
