@@ -12,6 +12,7 @@ public class SQL {
     private static final String URL          = "jdbc:mysql://flottan.mysql.database.azure.com:3306/" + DATABASE + useSSLTrue;
     private static final String USERNAME     = "goow@flottan";
     private static final String PASSWORD     = "Nackademin!123";
+    private static final String OBJECTTABLE  = "object_state_log";
 
 
     public static void testDatabaseConnection () {
@@ -49,6 +50,65 @@ public class SQL {
         } catch (Exception exc) {
             exc.printStackTrace();
         }
+    }
+
+    private static String getObjectPostString(String objectID) {
+        String sqlQuery = "select * from " + SQL.OBJECTTABLE + " where object_id = '" + objectID + "';";
+        String result = "No return: " + "object_type" + " on " + SQL.OBJECTTABLE;
+
+        return runSQLQuery(sqlQuery, "object_type", result);
+    }
+
+    private static int getObjectPostInt(String objectID, String returnColumn) {
+        String sqlQuery = "select * from " + SQL.OBJECTTABLE + " where object_id = '" + objectID + "';";
+        int result = -1;
+
+        try {
+            Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Statement myStatement = myConn.createStatement();
+            ResultSet myResult = myStatement.executeQuery(sqlQuery);
+            myResult.next();
+
+            result = myResult.getInt(returnColumn);
+
+        } catch (Exception exc) {exc.printStackTrace();}
+        return result;
+    }
+
+    private static String getObjectBasedOnCoordinate(int x, int y) {
+        String sqlQuery = "select * from " + SQL.OBJECTTABLE + " where x_axis = '" + x + "' and y_axis = '" + y + "';";
+        String result = "No return: " + "object_id" + " on " + SQL.OBJECTTABLE;
+
+        return runSQLQuery(sqlQuery, "object_id", result);
+    }
+
+    private static String runSQLQuery(String query, String returnColumn, String result) {
+        try {
+            Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Statement myStatement = myConn.createStatement();
+            ResultSet myResult = myStatement.executeQuery(query);
+            myResult.next();
+
+            result = myResult.getString(returnColumn);
+
+        } catch (Exception exc) {exc.printStackTrace();}
+        return result;
+    }
+
+    public static String getObjectType(String objectID) {
+        return getObjectPostString(objectID);
+    }
+
+    public static int getObjectX(String objectID) {
+        return getObjectPostInt(objectID, "x_axis");
+    }
+
+    public static int getObjectY(String objectID) {
+        return getObjectPostInt(objectID, "y_axis");
+    }
+
+    public static String getCoordinateObjectID(int xAxis, int yAxis) {
+        return getObjectBasedOnCoordinate(xAxis, yAxis);
     }
 
     private static String toString (int num) {
