@@ -14,7 +14,7 @@ public class SQL {
     private static final String PASSWORD     = "Nackademin!123";
 
 
-    public static void getDatabases () {
+    public static void testDatabaseConnection () {
 
         String table = "object_state_log";
 
