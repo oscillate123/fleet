@@ -25,6 +25,7 @@ public class Main {
         xDict.put("testboat1234", "25,24");
         GridMap newMap = new GridMap(25);
         newMap.drawMap(boatsID, xDict);
+        System.out.println("heej");
 
         /*
         System.out.println("\n ## IF YOU GET AN ERROR MESSAGE THAT INCLUDES AN IP ADRESS, SEND IT TO OSCAR! ## \n\n");
