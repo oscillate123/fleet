@@ -1,59 +1,62 @@
+import java.util.ArrayList;
+
 public class MapObject {
 
     protected String objectID;
     protected String objectType;
     protected int xAxis;
     protected int yAxis;
+    protected boolean isDocked;
 
-    MapObject(String objectID, String objectType, int xAxis, int yAxis) {
-        SQL.createNewObject(objectID, objectType, 0, 0, xAxis, yAxis);
-        this.objectID = objectID;
-        this.objectType = SQL.getObjectType(this.objectID);
-        this.xAxis = SQL.getObjectX(this.objectID);
-        this.yAxis = SQL.getObjectY(this.objectID);
+    MapObject(String objectID, String objectType, int xAxis, int yAxis, boolean isNew) {
+        if (isNew) {
+            SQL.createNewObject(objectID, objectType, 0, 0, xAxis, yAxis);
+        } else {
+            this.objectID = objectID;
+            this.objectType = SQL.getObjectType(this.objectID);
+            this.isDocked = (SQL.getObjectPostInt(this.objectID, SQL.qObjDocked) == 1);
+            this.xAxis = SQL.getObjectX(this.objectID);
+            this.yAxis = SQL.getObjectY(this.objectID);
+        }
     }
+
+    public boolean getIsDocked() { return this.isDocked; }
 
     public int getxAxis() { return SQL.getObjectX(this.objectID); }
 
-    public int getyAxis() {
-        return SQL.getObjectY(this.objectID);
-    }
+    public int getyAxis() { return SQL.getObjectY(this.objectID); }
 
-    public String getObjectType() {
-        return SQL.getObjectType(this.objectID);
-    }
+    public String getObjectType() { return this.objectType; }
 
 }
 
-// påbörjat havclass /gunnar
-class Ocean {
-    public boolean isDocked;
+class Ocean extends MapObject {
 
-    Ocean(boolean isDocked){
-       this.isDocked = isDocked;
+    Ocean(String objectID, String objectType, int isDocked, int xAxis, int yAxis, boolean isNew){
+        super(objectID, objectType, xAxis, yAxis, isNew);
+        SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID);
     }
 
 }
 
 class Ship extends MapObject {
 
-    Ship(String objectID, String objectType, int xAxis, int yAxis, int isDocked, int containerSum) {
-        super(objectID, objectType, xAxis, yAxis);
-        SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID); // sets docked status (0 or 1)
-        SQL.setObjectColumnInt(SQL.qObjConSum, containerSum, this.objectID); // sets container amount
+    // get and set methods further down
+    private int containerSum = SQL.getObjectPostInt(this.objectID, SQL.qObjConSum);
+
+    Ship(String objectID, String objectType, int isDocked, int containerSum, int xAxis, int yAxis, boolean isNew) {
+        super(objectID, objectType, xAxis, yAxis, isNew);
+
+        if (isNew) {
+            SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID); // sets docked status (0 or 1)
+            SQL.setObjectColumnInt(SQL.qObjConSum, containerSum, this.objectID); // sets container amount
+        }
     }
 
-    public void updateContainerAmount(int newValue) {
-        SQL.setObjectColumnInt(SQL.qObjConSum, newValue, this.objectID);
-    }
+    public void setContainerAmount(int newValue) { SQL.setObjectColumnInt(SQL.qObjConSum, newValue, this.objectID); }
 
-    public int getContainerAmount() {
-        return SQL.getObjectPostInt(this.objectID, SQL.qObjConSum);
-    }
+    public int getContainerAmount() { return this.containerSum; }
 
-    public boolean getIsDocked() {
-        return (SQL.getObjectPostInt(this.objectID, SQL.qObjDocked) == 1);
-    }
 }
 
 //påbörjat class för lassa/lossa

@@ -1,25 +1,34 @@
 import java.sql.*;
+import java.util.ArrayList;
 
 public class SQL {
 
     // TODO: If there is time, add SQL-injection checker
+    // TODO: Reusable SQL query methods
 
-    @SuppressWarnings("unused")
+    // Database connection parameters
     private static final String useSSLFalse  = "?useSSL=false";
     private static final String useSSLTrue   = "?useSSL=true";
     private static final String DATABASE     = "ships";
     private static final String URL          = "jdbc:mysql://flottan.mysql.database.azure.com:3306/" + DATABASE + useSSLTrue;
     private static final String USERNAME     = "goow@flottan";
     private static final String PASSWORD     = "Nackademin!123";
+
+    // tables
     private static final String OBJECTTABLE  = "object_state_log";
+    private static final String TRAVELLOG    = "travel_log";
 
-
+    // columns for OBJECTTABLE
     public static final String qObjID = "object_id";
     public static final String qObjType = "object_type";
     public static final String qObjDocked = "is_docked";
     public static final String qObjConSum = "container_sum";
-    public static final String qObjX = "x_axis";
-    public static final String qObjY = "y_axis";
+    public static final String qXAxis = "x_axis";
+    public static final String qYAxis = "y_axis";
+
+    // columns for TRAVELLOG
+    public static final String qLogID = "log_id";
+    public static final String qLogTime = "log_time";
 
 
     /*
@@ -28,8 +37,10 @@ public class SQL {
     *
     * */
 
-    public static void getObjectStateTable() {
+    public static ArrayList<String> getAllObjectIDs() {
+        // returns an array list with string array lists, one string array list is the content of one post in SQL DB
         String sql_query = "select * from " + OBJECTTABLE + ";";
+        ArrayList<String> listOfObjectIDs = new ArrayList<>();
 
         try {
             Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
@@ -37,21 +48,39 @@ public class SQL {
             ResultSet myResult = myStatement.executeQuery(sql_query);
             while (myResult.next()) {
                 String objectID = myResult.getString("object_id");
+                listOfObjectIDs.add(objectID);
+            }
+        } catch (Exception exc) { exc.printStackTrace(); }
+        return listOfObjectIDs;
+    }
+
+    public static ArrayList<String> getOneObjectAsArrayList(String findObjectID) {
+        // returns an array list with string array lists, one string array list is the content of one post in SQL DB
+
+        String sql_query = "select * from " + OBJECTTABLE + " where object_id = '" + findObjectID + "';";
+        ArrayList<String> resultList = new ArrayList<>();
+        try {
+            Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            Statement myStatement = myConn.createStatement();
+            ResultSet myResult = myStatement.executeQuery(sql_query);
+            while (myResult.next()) {
+                String objectID = myResult.getString("object_id");
                 String objectType = myResult.getString("object_type");
-                boolean isDocked = (myResult.getInt("is_docked") == 1);
+                int isDocked = myResult.getInt("is_docked");
                 int containerSum = myResult.getInt("container_sum");
                 int xAxis = myResult.getInt("x_axis");
                 int yAxis = myResult.getInt("y_axis");
 
-                String titles = "    ID   |     TYPE      |DOCKED |SUM |  X   |  Y";
-                System.out.println(titles);
+                resultList.add(objectID);
+                resultList.add(objectType);
+                resultList.add(toString(isDocked));
+                resultList.add(toString(containerSum));
+                resultList.add(toString(xAxis));
+                resultList.add(toString(yAxis));
 
-                String messagePart1 = objectID + " | " + objectType + " | "  + isDocked + " | ";
-                String messagePart2 = toString(containerSum) + " | X: " + toString(xAxis) + " | Y: " + toString(yAxis);
-                String message = messagePart1 + messagePart2;
-                System.out.println(message);
             }
         } catch (Exception exc) { exc.printStackTrace(); }
+        return resultList;
     }
 
     private static String getObjectPostString(String objectID) {
@@ -92,34 +121,21 @@ public class SQL {
             Statement myStatement = myConn.createStatement();
             ResultSet myResult = myStatement.executeQuery(query);
             myResult.next();
-
             result = myResult.getString(returnColumn);
-
             myConn.close();
-
         } catch (Exception exc) {exc.printStackTrace();}
         return result;
     }
 
-    public static String getObjectType(String objectID) {
-        return getObjectPostString(objectID);
-    }
+    public static String getObjectType(String objectID) { return getObjectPostString(objectID); }
 
-    public static int getObjectX(String objectID) {
-        return getObjectPostInt(objectID, "x_axis");
-    }
+    public static int getObjectX(String objectID) { return getObjectPostInt(objectID, SQL.qXAxis); }
 
-    public static int getObjectY(String objectID) {
-        return getObjectPostInt(objectID, "y_axis");
-    }
+    public static int getObjectY(String objectID) { return getObjectPostInt(objectID, SQL.qYAxis); }
 
-    public static String getCoordinateObjectID(int xAxis, int yAxis) {
-        return getObjectBasedOnCoordinate(xAxis, yAxis);
-    }
+    public static String getCoordinateObjectID(int xAxis, int yAxis) { return getObjectBasedOnCoordinate(xAxis, yAxis); }
 
-    private static String toString (int num) {
-        return Integer.toString(num);
-    }
+    private static String toString (int num) { return Integer.toString(num); }
 
     /*
      *
