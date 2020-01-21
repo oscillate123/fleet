@@ -3,17 +3,23 @@ import java.sql.*;
 public class SQL {
 
     // TODO: If there is time, add SQL-injection checker
+    // TODO: Reusable SQL query methods
 
-    @SuppressWarnings("unused")
+    // Database connection parameters
     private static final String useSSLFalse  = "?useSSL=false";
     private static final String useSSLTrue   = "?useSSL=true";
     private static final String DATABASE     = "ships";
     private static final String URL          = "jdbc:mysql://flottan.mysql.database.azure.com:3306/" + DATABASE + useSSLTrue;
     private static final String USERNAME     = "goow@flottan";
     private static final String PASSWORD     = "Nackademin!123";
+
+    // tables
     private static final String OBJECTTABLE  = "object_state_log";
+    private static final String CONTAINTABLE = "container_log";
+    private static final String TRAVELLOG    = "travel_log";
+    private static final String LINKCONOBJ   = "link_container_object";
 
-
+    // columns for OBJECTTABLE
     public static final String qObjID = "object_id";
     public static final String qObjType = "object_type";
     public static final String qObjDocked = "is_docked";
@@ -92,34 +98,21 @@ public class SQL {
             Statement myStatement = myConn.createStatement();
             ResultSet myResult = myStatement.executeQuery(query);
             myResult.next();
-
             result = myResult.getString(returnColumn);
-
             myConn.close();
-
         } catch (Exception exc) {exc.printStackTrace();}
         return result;
     }
 
-    public static String getObjectType(String objectID) {
-        return getObjectPostString(objectID);
-    }
+    public static String getObjectType(String objectID) { return getObjectPostString(objectID); }
 
-    public static int getObjectX(String objectID) {
-        return getObjectPostInt(objectID, "x_axis");
-    }
+    public static int getObjectX(String objectID) { return getObjectPostInt(objectID, SQL.qObjX); }
 
-    public static int getObjectY(String objectID) {
-        return getObjectPostInt(objectID, "y_axis");
-    }
+    public static int getObjectY(String objectID) { return getObjectPostInt(objectID, SQL.qObjY); }
 
-    public static String getCoordinateObjectID(int xAxis, int yAxis) {
-        return getObjectBasedOnCoordinate(xAxis, yAxis);
-    }
+    public static String getCoordinateObjectID(int xAxis, int yAxis) { return getObjectBasedOnCoordinate(xAxis, yAxis); }
 
-    private static String toString (int num) {
-        return Integer.toString(num);
-    }
+    private static String toString (int num) { return Integer.toString(num); }
 
     /*
      *

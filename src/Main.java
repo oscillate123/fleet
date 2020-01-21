@@ -11,9 +11,17 @@ public class Main {
         print_string(SQL.getObjectType(objectID));
         print_int(SQL.getObjectPostInt(objectID, SQL.qObjConSum));
 
-        MapObject kek = new MapObject("din_mamma", "ship", 0, 0);
+        MapObject kek = new MapObject("testboat1234", "ship", 0, 0);
 
         print_string(kek.getObjectType());
+
+        int counter = 0;
+
+        while (counter != 100) {
+            counter++;
+            String query = "insert into container_log (current_owner_id) values ('testboat1234');";
+            SQL.setRunSQLQuery(query);
+        }
 
     }
 
