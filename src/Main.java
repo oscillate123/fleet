@@ -11,7 +11,8 @@ public class Main {
         print_string(SQL.getObjectType(objectID));
         print_int(SQL.getObjectPostInt(objectID, SQL.qObjConSum));
 
-        MapObject kek = new MapObject("testboat1234", "ship", 0, 0);
+        MapObject kek = new MapObject("Gädda", "fiskebåt" +
+                "", 75, 75);
 
         print_string(kek.getObjectType());
 
