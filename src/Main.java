@@ -7,7 +7,7 @@ public class Main {
         String objectID = "BOAT1234";
         ArrayList<String> l = SQL.getOneObjectAsArrayList(objectID);
 
-<<<<<<< HEAD
+
         print_string(SQL.getCoordinateObjectID(0, 0));
         print_string(SQL.getObjectType(objectID));
         SQL.setObjectColumnString(SQL.qObjType, "ship" ,objectID);
@@ -15,16 +15,16 @@ public class Main {
         print_string(SQL.getObjectType(objectID));
         print_int(SQL.getObjectPostInt(objectID, SQL.qObjConSum));
 
-        MapObject kek = new MapObject("Gädda", "fiskebåt" +
-                "", 75, 75);
+        MapObject kek = new MapObject("Gädda", "fiskebåt", +
+                75, 75, false);
 
         print_string(kek.getObjectType());
 
         int counter = 0;
-=======
+
         Ship boat = new Ship(l.get(0), l.get(1), strToInt(l.get(2)),
                 strToInt(l.get(3)), strToInt(l.get(4)), strToInt(l.get(5)), false);
->>>>>>> df08134bbfb042ee927e2f2f3681e299ed7846d4
+
 
         if (!boat.getIsDocked()) {
             print_string("it works");
