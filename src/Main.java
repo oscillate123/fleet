@@ -1,13 +1,14 @@
-import java.util.ArrayList;
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
-        print_string("  -- Hello ladies and gentlemen this is your Main Method speaking. We are now flying --  ");
+        //print_string("  -- Hello ladies and gentlemen this is your Main Method speaking. We are now flying --  ");
         //System.out.println("testing");
         //SQL.getDatabases();
 
-        ArrayList<String> x = SQL.getAllObjectIDs();
+        GridMap newMap = new GridMap(25);
 
+        ArrayList<String> x = SQL.getAllObjectIDs();
         Map<String, String> boatCoords = new HashMap<String, String>();
         for (String objID : x) {
             int xCoord = SQL.getObjectX(objID);
@@ -16,22 +17,10 @@ public class Main {
             boatCoords.put(objID, coordString);
         }
 
-        System.out.println(boatCoords);
-        GridMap newMap = new GridMap(25);
         newMap.drawMap(boatCoords);
-/*
-        Map<String, String> xDict = new HashMap<String, String>();
-        xDict.put("BOAT1234", "1,2");
-        xDict.put("din_mamma", "2,2");
-        xDict.put("min_mamma", "2,1");
-        xDict.put("ollan", "24,1");
-        xDict.put("olle", "24,2");
-        xDict.put("ollen", "25,2");
-        xDict.put("qwe", "24,24");
-        xDict.put("testboat1234", "25,24");
-        */
-        /*
-        System.out.println("\n ## IF YOU GET AN ERROR MESSAGE THAT INCLUDES AN IP ADRESS, SEND IT TO OSCAR! ## \n\n");
+
+
+        /*System.out.println("\n ## IF YOU GET AN ERROR MESSAGE THAT INCLUDES AN IP ADRESS, SEND IT TO OSCAR! ## \n\n");
         print_string("kek");
 
         String objectID = "BOAT1234";
@@ -64,12 +53,12 @@ public class Main {
             print_string("\n");
             print_string("ID:   " + object_id);
             print_string("Type: " + SQL.getObjectType(objectID));
-        }
+        }*/
 
     }
 
-    public static void print_string(String text) { System.out.println(text); }
+    /*public static void print_string(String text) { System.out.println(text); }
     public static void print_int(int x) { System.out.println(x); }
-    public static int strToInt(String str) { return Integer.parseInt(str); }
+    public static int strToInt(String str) { return Integer.parseInt(str); }*/
 
 }
