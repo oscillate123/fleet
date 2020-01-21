@@ -1,9 +1,8 @@
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class SQL {
+
+    // TODO: If there is time, add SQL-injection checker
 
     @SuppressWarnings("unused")
     private static final String useSSLFalse  = "?useSSL=false";
@@ -14,6 +13,20 @@ public class SQL {
     private static final String PASSWORD     = "Nackademin!123";
     private static final String OBJECTTABLE  = "object_state_log";
 
+
+    public static final String qObjID = "object_id";
+    public static final String qObjType = "object_type";
+    public static final String qObjDocked = "is_docked";
+    public static final String qObjConSum = "container_sum";
+    public static final String qObjX = "x_axis";
+    public static final String qObjY = "y_axis";
+
+
+    /*
+    *
+    *   THIS IS THE GET SQL DATA SECTION
+    *
+    * */
 
     public static void getObjectStateTable() {
         String sql_query = "select * from " + OBJECTTABLE + ";";
@@ -45,7 +58,7 @@ public class SQL {
         String sqlQuery = "select * from " + SQL.OBJECTTABLE + " where object_id = '" + objectID + "';";
         String result = "No return: " + "object_type" + " on " + SQL.OBJECTTABLE;
 
-        return runSQLQuery(sqlQuery, "object_type", result);
+        return getRunSQLQuery(sqlQuery, "object_type", result);
     }
 
     public static int getObjectPostInt(String objectID, String returnColumn) {
@@ -60,7 +73,9 @@ public class SQL {
 
             result = myResult.getInt(returnColumn);
 
-        } catch (Exception exc) {exc.printStackTrace();}
+            myConn.close();
+
+        } catch (Exception exc) { exc.printStackTrace(); }
         return result;
     }
 
@@ -68,10 +83,10 @@ public class SQL {
         String sqlQuery = "select * from " + SQL.OBJECTTABLE + " where x_axis = '" + x + "' and y_axis = '" + y + "';";
         String result = "No return: " + "object_id" + " on " + SQL.OBJECTTABLE;
 
-        return runSQLQuery(sqlQuery, "object_id", result);
+        return getRunSQLQuery(sqlQuery, "object_id", result);
     }
 
-    private static String runSQLQuery(String query, String returnColumn, String result) {
+    private static String getRunSQLQuery(String query, String returnColumn, String result) {
         try {
             Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             Statement myStatement = myConn.createStatement();
@@ -79,6 +94,8 @@ public class SQL {
             myResult.next();
 
             result = myResult.getString(returnColumn);
+
+            myConn.close();
 
         } catch (Exception exc) {exc.printStackTrace();}
         return result;
@@ -103,4 +120,43 @@ public class SQL {
     private static String toString (int num) {
         return Integer.toString(num);
     }
+
+    /*
+     *
+     *   THIS IS THE SET SQL DATA SECTION
+     *
+     * */
+
+    public static void setRunSQLQuery(String query) {
+        try {
+            Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+            PreparedStatement prepStatement = myConn.prepareStatement(query);
+            prepStatement.executeUpdate();
+        } catch (Exception exc) {exc.printStackTrace();}
+    }
+
+    public static void setObjectColumnString(String objectColumn, String newValue, String objectID) {
+        String query1 = "update " + OBJECTTABLE + " set " + objectColumn + " = '" + newValue + "'";
+        String query2 = " where object_id = '" + objectID + "';";
+        String runQuery = query1 + query2;
+        setRunSQLQuery(runQuery);
+    }
+
+    public static void setObjectColumnInt(String objectColumn, int newValue, String objectID) {
+        String query1 = "update " + OBJECTTABLE + " set " + objectColumn + " = " + newValue + "";
+        String query2 = " where object_id = '" + objectID + "';";
+        String runQuery = query1 + query2;
+        setRunSQLQuery(runQuery);
+    }
+
+    public static void createNewObject(String objectID, String objectType, int isDocked, int containerSum,
+                                           int xAxis, int yAxis) {
+        String insert = "insert into object_state_log ";
+        String columns = "(object_id, object_type, is_docked, container_sum, x_axis, y_axis)";
+        String values = "values ('" + objectID + "', '" + objectType + "', " + isDocked + ", " + containerSum;
+        String values2 = ", " + xAxis + ", " + yAxis + ");";
+        String query = insert + columns + values + values2;
+        setRunSQLQuery(query);
+    }
+
 }

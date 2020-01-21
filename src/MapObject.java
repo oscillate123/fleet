@@ -6,10 +6,11 @@ public class MapObject {
     protected int yAxis;
 
     MapObject(String objectID, String objectType, int xAxis, int yAxis) {
+        SQL.createNewObject(objectID, objectType, 0, 0, xAxis, yAxis);
         this.objectID = objectID;
-        this.objectType = objectType;
-        this.xAxis = xAxis;
-        this.yAxis = yAxis;
+        this.objectType = SQL.getObjectType(this.objectID);
+        this.xAxis = SQL.getObjectX(this.objectID);
+        this.yAxis = SQL.getObjectY(this.objectID);
     }
 
     public int getxAxis() { return SQL.getObjectX(this.objectID); }
@@ -36,24 +37,22 @@ class Ocean {
 
 class Ship extends MapObject {
 
-    private boolean isDocked;
-
-    Ship(String objectID, String objectType, int xAxis, int yAxis, boolean isDocked) {
+    Ship(String objectID, String objectType, int xAxis, int yAxis, int isDocked, int containerSum) {
         super(objectID, objectType, xAxis, yAxis);
-        this.isDocked = isDocked;
+        SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID); // sets docked status (0 or 1)
+        SQL.setObjectColumnInt(SQL.qObjConSum, containerSum, this.objectID); // sets container amount
     }
 
     public void updateContainerAmount(int newValue) {
-        // TODO: SKA INTE VARA getObject, utan setObjectPostInt! ## vi vill ändra inte hämta ##
-        SQL.getObjectPostInt(this.objectID, "container_sum");
+        SQL.setObjectColumnInt(SQL.qObjConSum, newValue, this.objectID);
     }
 
     public int getContainerAmount() {
-        return SQL.getObjectPostInt(this.objectID, "container_sum");
+        return SQL.getObjectPostInt(this.objectID, SQL.qObjConSum);
     }
 
-    public boolean isDocked() {
-        return isDocked;
+    public boolean getIsDocked() {
+        return (SQL.getObjectPostInt(this.objectID, SQL.qObjDocked) == 1);
     }
 }
 

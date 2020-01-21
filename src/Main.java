@@ -4,13 +4,16 @@ public class Main {
 
         String objectID = "BOAT1234";
 
-        String x = SQL.getObjectType(objectID);
-        System.out.println(x);
-
-        System.out.println(SQL.getObjectX(objectID));
-        System.out.println(SQL.getObjectY(objectID));
-
         print_string(SQL.getCoordinateObjectID(0, 0));
+        print_string(SQL.getObjectType(objectID));
+        SQL.setObjectColumnString(SQL.qObjType, "ship" ,objectID);
+        SQL.setObjectColumnInt(SQL.qObjConSum, 10, objectID);
+        print_string(SQL.getObjectType(objectID));
+        print_int(SQL.getObjectPostInt(objectID, SQL.qObjConSum));
+
+        MapObject kek = new MapObject("din_mamma", "ship", 0, 0);
+
+        print_string(kek.getObjectType());
 
     }
 
