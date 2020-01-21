@@ -102,14 +102,12 @@ public class SQL {
         int result = -1;
 
         try {
-            Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            Statement myStatement = myConn.createStatement();
+            Statement myStatement = this.SQL.createStatement();
             ResultSet myResult = myStatement.executeQuery(sqlQuery);
             myResult.next();
 
             result = myResult.getInt(returnColumn);
 
-            myConn.close();
 
         } catch (Exception exc) { exc.printStackTrace(); }
         return result;
