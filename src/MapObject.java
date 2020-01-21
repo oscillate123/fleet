@@ -23,3 +23,13 @@ public class MapObject {
     }
 
 }
+
+// påbörjat havclass /gunnar
+class Ocean {
+    public boolean isDocked;
+
+    Ocean(boolean isDocked){
+       this.isDocked = isDocked;
+    }
+
+}
