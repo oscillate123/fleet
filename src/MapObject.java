@@ -18,6 +18,7 @@ public class MapObject {
         }
     }
 
+
     public int getxAxis() { return SQL.getObjectX(this.objectID); }
 
     public int getyAxis() { return SQL.getObjectY(this.objectID); }
@@ -28,12 +29,11 @@ public class MapObject {
 
 }
 
-// påbörjat havclass /gunnar
-class Ocean {
-    public boolean isDocked;
+class Ocean extends MapObject {
 
-    Ocean(boolean isDocked){
-       this.isDocked = isDocked;
+    Ocean(String objectID, String objectType, int xAxis, int yAxis, int isDocked){
+        super(objectID, objectType, xAxis, yAxis);
+        SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID);
     }
 
 }
