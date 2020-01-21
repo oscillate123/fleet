@@ -1,33 +1,32 @@
-import java.util.ArrayList;
+import java.util.*;
+import java.sql.*;
 
 public class Main {
-    public static void main(String[] args) {
-        print_string("kek");
+    public static void main(String[] args) throws SQLException{
+        //print_string("  -- Hello ladies and gentlemen this is your Main Method speaking. We are now flying --  ");
+        //System.out.println("testing");
+        //SQL.getDatabases();
+        SQL sqlConnection = new SQL();
+        GridMap newMap = new GridMap(25);
+        Map<String, String> boatCoords = getCoordMap(sqlConnection);
 
-        String objectID = "BOAT1234";
-        ArrayList<String> kek = SQL.getOneObjectAsArrayList(objectID);
+        newMap.drawMap(boatCoords);
 
-        Ship boat = new Ship(kek.get(0), kek.get(1), stringToInt(kek.get(2)),
-                stringToInt(kek.get(3)), stringToInt(kek.get(4)), stringToInt(kek.get(5)), false);
+    }
 
-        if (!boat.getIsDocked()) {
-            print_string("it works");
+    public static Map<String, String> getCoordMap(SQL sqlConnection) {
+        ArrayList<String> x = sqlConnection.getAllObjectIDs();
+        Map<String, String> coordMap = new HashMap<String, String>();
+        for (String objID : x) {
+            int xCoord = sqlConnection.getObjectX(objID);
+            int yCoord = sqlConnection.getObjectY(objID);
+            String coordString = Integer.toString(xCoord) + "," + Integer.toString(yCoord);
+            coordMap.put(objID, coordString);
         }
-
-        for (String object_id : SQL.getAllObjectIDs()) {
-            print_string(object_id);
-        }
-
+        return coordMap;
     }
-
-    public static void print_string(String text) {
-        System.out.println("\n" + text);
-    }
-
-    public static void print_int(int x) {
-        System.out.println("\n" + x);
-    }
-
-    public static int stringToInt (String str) { return Integer.parseInt(str); }
+    public static void print_string(String text) { System.out.println(text); }
+    public static void print_int(int x) { System.out.println(x); }
+    public static int strToInt(String str) { return Integer.parseInt(str); }
 
 }
