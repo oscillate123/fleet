@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 public class MapObject {
 
     protected String objectID;
@@ -5,22 +7,23 @@ public class MapObject {
     protected int xAxis;
     protected int yAxis;
 
-    MapObject(String objectID, String objectType, int xAxis, int yAxis) {
-        SQL.createNewObject(objectID, objectType, 0, 0, xAxis, yAxis);
-        this.objectID = objectID;
-        this.objectType = SQL.getObjectType(this.objectID);
-        this.xAxis = SQL.getObjectX(this.objectID);
-        this.yAxis = SQL.getObjectY(this.objectID);
+    MapObject(String objectID, String objectType, int xAxis, int yAxis, boolean isNew) {
+        if (isNew) {
+            SQL.createNewObject(objectID, objectType, 0, 0, xAxis, yAxis);
+        } else {
+            this.objectID = objectID;
+            this.objectType = SQL.getObjectType(this.objectID);
+            this.xAxis = SQL.getObjectX(this.objectID);
+            this.yAxis = SQL.getObjectY(this.objectID);
+        }
     }
 
     public int getxAxis() { return SQL.getObjectX(this.objectID); }
 
-    public int getyAxis() {
-        return SQL.getObjectY(this.objectID);
-    }
+    public int getyAxis() { return SQL.getObjectY(this.objectID); }
 
     public String getObjectType() {
-        return SQL.getObjectType(this.objectID);
+        return this.objectType;
     }
 
 }
@@ -37,10 +40,18 @@ class Ocean {
 
 class Ship extends MapObject {
 
-    Ship(String objectID, String objectType, int xAxis, int yAxis, int isDocked, int containerSum) {
-        super(objectID, objectType, xAxis, yAxis);
-        SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID); // sets docked status (0 or 1)
-        SQL.setObjectColumnInt(SQL.qObjConSum, containerSum, this.objectID); // sets container amount
+    private boolean isDocked;
+    private int containerSum;
+
+    Ship(String objectID, String objectType, int isDocked, int containerSum, int xAxis, int yAxis, boolean isNew) {
+        super(objectID, objectType, xAxis, yAxis, isNew);
+
+        if (isNew) {
+            SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID); // sets docked status (0 or 1)
+            SQL.setObjectColumnInt(SQL.qObjConSum, containerSum, this.objectID); // sets container amount
+        }
+        this.isDocked = (SQL.getObjectPostInt(this.objectID, SQL.qObjDocked) == 1);
+        this.containerSum = SQL.getObjectPostInt(this.objectID, SQL.qObjConSum);
     }
 
     public void updateContainerAmount(int newValue) {
@@ -48,12 +59,13 @@ class Ship extends MapObject {
     }
 
     public int getContainerAmount() {
-        return SQL.getObjectPostInt(this.objectID, SQL.qObjConSum);
+        return this.containerSum;
     }
 
     public boolean getIsDocked() {
-        return (SQL.getObjectPostInt(this.objectID, SQL.qObjDocked) == 1);
+        return this.isDocked;
     }
+
 }
 
 //påbörjat class för lassa/lossa
