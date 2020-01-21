@@ -4,16 +4,21 @@ public class Main {
     public static void main(String[] args) {
         //System.out.println("testing");
         //SQL.getDatabases();
-        ArrayList<String> boatsID = new ArrayList<String>();
-        boatsID.add("BOAT1234");
-        boatsID.add("din_mamma");
-        boatsID.add("min_mamma");
-        boatsID.add("ollan");
-        boatsID.add("olle");
-        boatsID.add("ollen");
-        boatsID.add("qwe");
-        boatsID.add("testboat1234");
 
+        ArrayList<String> x = SQL.getAllObjectIDs();
+
+        Map<String, String> boatCoords = new HashMap<String, String>();
+        for (String objID : x) {
+            int xCoord = SQL.getObjectX(objID);
+            int yCoord = SQL.getObjectY(objID);
+            String coordString = Integer.toString(xCoord) + "," + Integer.toString(yCoord);
+            boatCoords.put(objID, coordString);
+        }
+
+        System.out.println(boatCoords);
+        GridMap newMap = new GridMap(25);
+        newMap.drawMap(boatCoords);
+/*
         Map<String, String> xDict = new HashMap<String, String>();
         xDict.put("BOAT1234", "1,2");
         xDict.put("din_mamma", "2,2");
@@ -23,9 +28,7 @@ public class Main {
         xDict.put("ollen", "25,2");
         xDict.put("qwe", "24,24");
         xDict.put("testboat1234", "25,24");
-        GridMap newMap = new GridMap(25);
-        newMap.drawMap(boatsID, xDict);
-
+        */
         /*
         System.out.println("\n ## IF YOU GET AN ERROR MESSAGE THAT INCLUDES AN IP ADRESS, SEND IT TO OSCAR! ## \n\n");
         print_string("kek");

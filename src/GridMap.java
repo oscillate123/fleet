@@ -10,7 +10,7 @@ public class GridMap {
 
     }
 
-    void drawMap(ArrayList<String> boatsList, Map<String, String> dict) {
+    void drawMap(Map<String, String> dict) {
         char objChar;
         for (int y = 1; y <= this.size; y++) {
             for (int x = 1; x <= this.size; x++) {
@@ -18,7 +18,7 @@ public class GridMap {
                     objChar = 'H';
                 else
                     objChar = ' ';
-                for(String boat : boatsList){
+                for(String boat : dict.keySet()){
                     String[] temp = dict.get(boat).split(",");
                     int boatX = Integer.parseInt(temp[0]);
                     int boatY = Integer.parseInt(temp[1]);
