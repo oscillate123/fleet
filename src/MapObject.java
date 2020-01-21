@@ -1,9 +1,9 @@
 public class MapObject {
 
-    private String objectID;
-    private String objectType;
-    private int xAxis;
-    private int yAxis;
+    protected String objectID;
+    protected String objectType;
+    protected int xAxis;
+    protected int yAxis;
 
     MapObject(String objectID, String objectType, int xAxis, int yAxis) {
         this.objectID = objectID;
@@ -36,12 +36,31 @@ class Ocean {
 
 class Ship extends MapObject {
 
-    private int containerAmount;
     private boolean isDocked;
 
-    Ship(String objectID, String objectType, int xAxis, int yAxis, int containerAmount) {
+    Ship(String objectID, String objectType, int xAxis, int yAxis, boolean isDocked) {
         super(objectID, objectType, xAxis, yAxis);
-        this.containerAmount = containerAmount;
+        this.isDocked = isDocked;
     }
+
+    public void updateContainerAmount(int newValue) {
+        // TODO: SKA INTE VARA getObject, utan setObjectPostInt! ## vi vill ändra inte hämta ##
+        SQL.getObjectPostInt(this.objectID, "container_sum");
+    }
+
+    public int getContainerAmount() {
+        return SQL.getObjectPostInt(this.objectID, "container_sum");
+    }
+
+    public boolean isDocked() {
+        return isDocked;
+    }
+}
+
+//påbörjat class för lassa/lossa
+class LoadUnload{
+    public int containerSum;
+
+    LoadUnload(int containerSum){this.containerSum = containerSum;}
 
 }

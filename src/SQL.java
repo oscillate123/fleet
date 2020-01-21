@@ -15,22 +15,14 @@ public class SQL {
     private static final String OBJECTTABLE  = "object_state_log";
 
 
-    public static void testDatabaseConnection () {
-
-        String table = "object_state_log";
-
-        String sql_query = "select * from " + table + ";";
-        // String sql_query = "show databases;";
+    public static void getObjectStateTable() {
+        String sql_query = "select * from " + OBJECTTABLE + ";";
 
         try {
-
             Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             Statement myStatement = myConn.createStatement();
-
             ResultSet myResult = myStatement.executeQuery(sql_query);
-
             while (myResult.next()) {
-
                 String objectID = myResult.getString("object_id");
                 String objectType = myResult.getString("object_type");
                 boolean isDocked = (myResult.getInt("is_docked") == 1);
@@ -46,10 +38,7 @@ public class SQL {
                 String message = messagePart1 + messagePart2;
                 System.out.println(message);
             }
-
-        } catch (Exception exc) {
-            exc.printStackTrace();
-        }
+        } catch (Exception exc) { exc.printStackTrace(); }
     }
 
     private static String getObjectPostString(String objectID) {
@@ -59,7 +48,7 @@ public class SQL {
         return runSQLQuery(sqlQuery, "object_type", result);
     }
 
-    private static int getObjectPostInt(String objectID, String returnColumn) {
+    public static int getObjectPostInt(String objectID, String returnColumn) {
         String sqlQuery = "select * from " + SQL.OBJECTTABLE + " where object_id = '" + objectID + "';";
         int result = -1;
 
