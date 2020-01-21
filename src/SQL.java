@@ -6,29 +6,37 @@ public class SQL {
     // TODO: If there is time, add SQL-injection checker
     // TODO: Reusable SQL query methods
 
-    // Database connection parameters
-    private static final String useSSLFalse  = "?useSSL=false";
-    private static final String useSSLTrue   = "?useSSL=true";
-    private static final String DATABASE     = "ships";
-    private static final String URL          = "jdbc:mysql://flottan.mysql.database.azure.com:3306/" + DATABASE + useSSLTrue;
-    private static final String USERNAME     = "goow@flottan";
-    private static final String PASSWORD     = "Nackademin!123";
+    // Database connection
+    private final String useSSLFalse  = "?useSSL=false";
+    private final String useSSLTrue   = "?useSSL=true";
+    private final String DATABASE     = "ships";
+    private final String URL          = "jdbc:mysql://flottan.mysql.database.azure.com:3306/" + DATABASE + useSSLTrue;
+    private final String USERNAME     = "goow@flottan";
+    private final String PASSWORD     = "Nackademin!123";
+    private final Connection SQL;
 
     // tables
-    private static final String OBJECTTABLE  = "object_state_log";
-    private static final String TRAVELLOG    = "travel_log";
+    private final String OBJECTTABLE  = "object_state_log";
+    private final String TRAVELLOG    = "travel_log";
 
     // columns for OBJECTTABLE
-    public static final String qObjID = "object_id";
-    public static final String qObjType = "object_type";
-    public static final String qObjDocked = "is_docked";
-    public static final String qObjConSum = "container_sum";
-    public static final String qXAxis = "x_axis";
-    public static final String qYAxis = "y_axis";
+    public final String qObjID = "object_id";
+    public final String qObjType = "object_type";
+    public final String qObjDocked = "is_docked";
+    public final String qObjConSum = "container_sum";
+    public final String qXAxis = "x_axis";
+    public final String qYAxis = "y_axis";
 
     // columns for TRAVELLOG
-    public static final String qLogID = "log_id";
-    public static final String qLogTime = "log_time";
+    public final String qLogID = "log_id";
+    public final String qLogTime = "log_time";
+
+
+    // constructor
+
+    SQL() throws SQLException {
+        this.SQL = DriverManager.getConnection(URL, USERNAME, PASSWORD);;
+    }
 
 
     /*
@@ -37,14 +45,13 @@ public class SQL {
     *
     * */
 
-    public static ArrayList<String> getAllObjectIDs() {
+    public ArrayList<String> getAllObjectIDs() {
         // returns an array list with string array lists, one string array list is the content of one post in SQL DB
         String sql_query = "select * from " + OBJECTTABLE + ";";
         ArrayList<String> listOfObjectIDs = new ArrayList<>();
 
         try {
-            Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            Statement myStatement = myConn.createStatement();
+            Statement myStatement = this.SQL.createStatement();
             ResultSet myResult = myStatement.executeQuery(sql_query);
             while (myResult.next()) {
                 String objectID = myResult.getString("object_id");
@@ -54,14 +61,14 @@ public class SQL {
         return listOfObjectIDs;
     }
 
-    public static ArrayList<String> getOneObjectAsArrayList(String findObjectID) {
+    public ArrayList<String> getOneObjectAsArrayList(String findObjectID) {
         // returns an array list with string array lists, one string array list is the content of one post in SQL DB
 
         String sql_query = "select * from " + OBJECTTABLE + " where object_id = '" + findObjectID + "';";
         ArrayList<String> resultList = new ArrayList<>();
         try {
             Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            Statement myStatement = myConn.createStatement();
+            Statement myStatement = this.SQL.createStatement();
             ResultSet myResult = myStatement.executeQuery(sql_query);
             while (myResult.next()) {
                 String objectID = myResult.getString("object_id");
@@ -83,15 +90,15 @@ public class SQL {
         return resultList;
     }
 
-    private static String getObjectPostString(String objectID) {
-        String sqlQuery = "select * from " + SQL.OBJECTTABLE + " where object_id = '" + objectID + "';";
-        String result = "No return: " + "object_type" + " on " + SQL.OBJECTTABLE;
+    private String getObjectPostString(String objectID) {
+        String sqlQuery = "select * from " + this.OBJECTTABLE + " where object_id = '" + objectID + "';";
+        String result = "No return: " + "object_type" + " on " + this.OBJECTTABLE;
 
         return getRunSQLQuery(sqlQuery, "object_type", result);
     }
 
-    public static int getObjectPostInt(String objectID, String returnColumn) {
-        String sqlQuery = "select * from " + SQL.OBJECTTABLE + " where object_id = '" + objectID + "';";
+    public int getObjectPostInt(String objectID, String returnColumn) {
+        String sqlQuery = "select * from " + this.OBJECTTABLE + " where object_id = '" + objectID + "';";
         int result = -1;
 
         try {
@@ -108,14 +115,14 @@ public class SQL {
         return result;
     }
 
-    private static String getObjectBasedOnCoordinate(int x, int y) {
-        String sqlQuery = "select * from " + SQL.OBJECTTABLE + " where x_axis = '" + x + "' and y_axis = '" + y + "';";
-        String result = "No return: " + "object_id" + " on " + SQL.OBJECTTABLE;
+    private String getObjectBasedOnCoordinate(int x, int y) {
+        String sqlQuery = "select * from " + this.OBJECTTABLE + " where x_axis = '" + x + "' and y_axis = '" + y + "';";
+        String result = "No return: " + "object_id" + " on " + this.OBJECTTABLE;
 
         return getRunSQLQuery(sqlQuery, "object_id", result);
     }
 
-    private static String getRunSQLQuery(String query, String returnColumn, String result) {
+    private String getRunSQLQuery(String query, String returnColumn, String result) {
         try {
             Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             Statement myStatement = myConn.createStatement();
@@ -127,15 +134,15 @@ public class SQL {
         return result;
     }
 
-    public static String getObjectType(String objectID) { return getObjectPostString(objectID); }
+    public String getObjectType(String objectID) { return getObjectPostString(objectID); }
 
-    public static int getObjectX(String objectID) { return getObjectPostInt(objectID, SQL.qXAxis); }
+    public int getObjectX(String objectID) { return getObjectPostInt(objectID, this.qXAxis); }
 
-    public static int getObjectY(String objectID) { return getObjectPostInt(objectID, SQL.qYAxis); }
+    public int getObjectY(String objectID) { return getObjectPostInt(objectID, this.qYAxis); }
 
-    public static String getCoordinateObjectID(int xAxis, int yAxis) { return getObjectBasedOnCoordinate(xAxis, yAxis); }
+    public String getCoordinateObjectID(int xAxis, int yAxis) { return getObjectBasedOnCoordinate(xAxis, yAxis); }
 
-    private static String toString (int num) { return Integer.toString(num); }
+    private String toString (int num) { return Integer.toString(num); }
 
     /*
      *
@@ -143,7 +150,7 @@ public class SQL {
      *
      * */
 
-    public static void setRunSQLQuery(String query) {
+    public void setRunSQLQuery(String query) {
         try {
             Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             PreparedStatement prepStatement = myConn.prepareStatement(query);
@@ -151,21 +158,21 @@ public class SQL {
         } catch (Exception exc) {exc.printStackTrace();}
     }
 
-    public static void setObjectColumnString(String objectColumn, String newValue, String objectID) {
-        String query1 = "update " + OBJECTTABLE + " set " + objectColumn + " = '" + newValue + "'";
+    public void setObjectColumnString(String objectColumn, String newValue, String objectID) {
+        String query1 = "update " + this.OBJECTTABLE + " set " + objectColumn + " = '" + newValue + "'";
         String query2 = " where object_id = '" + objectID + "';";
         String runQuery = query1 + query2;
         setRunSQLQuery(runQuery);
     }
 
-    public static void setObjectColumnInt(String objectColumn, int newValue, String objectID) {
-        String query1 = "update " + OBJECTTABLE + " set " + objectColumn + " = " + newValue + "";
+    public void setObjectColumnInt(String objectColumn, int newValue, String objectID) {
+        String query1 = "update " + this.OBJECTTABLE + " set " + objectColumn + " = " + newValue + "";
         String query2 = " where object_id = '" + objectID + "';";
         String runQuery = query1 + query2;
         setRunSQLQuery(runQuery);
     }
 
-    public static void createNewObject(String objectID, String objectType, int isDocked, int containerSum,
+    public void createNewObject(String objectID, String objectType, int isDocked, int containerSum,
                                            int xAxis, int yAxis) {
         String insert = "insert into object_state_log ";
         String columns = "(object_id, object_type, is_docked, container_sum, x_axis, y_axis)";

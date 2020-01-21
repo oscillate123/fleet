@@ -1,19 +1,24 @@
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
+
+        SQL sqlConnection = new SQL();
+
         print_string("  -- Hello ladies and gentlemen this is your Main Method speaking. We are now flying --  ");
 
         String objectID = "BOAT1234";
-        ArrayList<String> l = SQL.getOneObjectAsArrayList(objectID);
+        ArrayList<String> l = sqlConnection.getOneObjectAsArrayList(objectID);
 
+        print_string(l.toString());
 
-        print_string(SQL.getCoordinateObjectID(0, 0));
-        print_string(SQL.getObjectType(objectID));
-        SQL.setObjectColumnString(SQL.qObjType, "ship" ,objectID);
-        SQL.setObjectColumnInt(SQL.qObjConSum, 10, objectID);
-        print_string(SQL.getObjectType(objectID));
-        print_int(SQL.getObjectPostInt(objectID, SQL.qObjConSum));
+        print_string(sqlConnection.getCoordinateObjectID(0, 0));
+        print_string(sqlConnection.getObjectType(objectID));
+        sqlConnection.setObjectColumnString(sqlConnection.qObjType, "ship" ,objectID);
+        sqlConnection.setObjectColumnInt(sqlConnection.qObjConSum, 10, objectID);
+        print_string(sqlConnection.getObjectType(objectID));
+        print_int(sqlConnection.getObjectPostInt(objectID, sqlConnection.qObjConSum));
 
         MapObject kek = new MapObject("Gädda", "fiskebåt", +
                 75, 75, false);
@@ -30,10 +35,10 @@ public class Main {
             print_string("it works");
         }
 
-        for (String object_id : SQL.getAllObjectIDs()) {
+        for (String object_id : sqlConnection.getAllObjectIDs()) {
             print_string("\n");
             print_string("ID:   " + object_id);
-            print_string("Type: " + SQL.getObjectType(objectID));
+            print_string("Type: " + sqlConnection.getObjectType(objectID));
         }
 
     }

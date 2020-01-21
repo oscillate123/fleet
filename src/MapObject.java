@@ -1,14 +1,16 @@
-import java.util.ArrayList;
+import java.sql.SQLException;
 
 public class MapObject {
 
+    protected SQL SQL;
     protected String objectID;
     protected String objectType;
     protected int xAxis;
     protected int yAxis;
     protected boolean isDocked;
 
-    MapObject(String objectID, String objectType, int xAxis, int yAxis, boolean isNew) {
+    MapObject(String objectID, String objectType, int xAxis, int yAxis, boolean isNew) throws SQLException {
+        this.SQL = new SQL();
         if (isNew) {
             SQL.createNewObject(objectID, objectType, 0, 0, xAxis, yAxis);
         } else {
@@ -32,7 +34,13 @@ public class MapObject {
 
 class Ocean extends MapObject {
 
-    Ocean(String objectID, String objectType, int isDocked, int xAxis, int yAxis, boolean isNew){
+    Ocean(String objectID,
+          String objectType,
+          int isDocked,
+          int xAxis,
+          int yAxis,
+          boolean isNew) throws SQLException {
+
         super(objectID, objectType, xAxis, yAxis, isNew);
         SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID);
     }
@@ -44,7 +52,14 @@ class Ship extends MapObject {
     // get and set methods further down
     private int containerSum = SQL.getObjectPostInt(this.objectID, SQL.qObjConSum);
 
-    Ship(String objectID, String objectType, int isDocked, int containerSum, int xAxis, int yAxis, boolean isNew) {
+    Ship(String objectID,
+         String objectType,
+         int isDocked,
+         int containerSum,
+         int xAxis,
+         int yAxis,
+         boolean isNew) throws SQLException {
+
         super(objectID, objectType, xAxis, yAxis, isNew);
 
         if (isNew) {
