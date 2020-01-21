@@ -1,14 +1,16 @@
-public class Map {
+import java.util.*;
+
+public class GridMap {
     int size;
     int mapCenter;
 
-    public Map(int mapSize) {
+    public GridMap(int mapSize) {
         this.size = mapSize;
         mapCenter = size/2+1;
 
     }
 
-    void drawMap() {
+    void drawMap(ArrayList<String> boatsList, Map<String, String> dict) {
         char objChar;
         for (int y = 1; y <= this.size; y++) {
             for (int x = 1; x <= this.size; x++) {
@@ -16,6 +18,14 @@ public class Map {
                     objChar = 'H';
                 else
                     objChar = ' ';
+                for(String boat : boatsList){
+                    String[] temp = dict.get(boat).split(",");
+                    int boatX = Integer.parseInt(temp[0]);
+                    int boatY = Integer.parseInt(temp[1]);
+                    if (boatX == x && boatY == y)
+                        objChar = 'B';
+                }
+
                 System.out.print("[" + objChar + "]");
             }
             System.out.print("\n");
