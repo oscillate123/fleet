@@ -33,3 +33,15 @@ class Ocean {
     }
 
 }
+
+class Ship extends MapObject {
+
+    private int containerAmount;
+    private boolean isDocked;
+
+    Ship(String objectID, String objectType, int xAxis, int yAxis, int containerAmount) {
+        super(objectID, objectType, xAxis, yAxis);
+        this.containerAmount = containerAmount;
+    }
+
+}
