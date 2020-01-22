@@ -9,6 +9,7 @@ public class MapObject {
     protected int xAxis;
     protected int yAxis;
     protected boolean isDocked;
+    protected boolean isBlocked = true;
 
     MapObject(String objectID, String objectType, int xAxis, int yAxis, boolean isNew) throws SQLException {
         this.SQL = new SQL();
@@ -44,8 +45,12 @@ class Ocean extends MapObject {
 
         super(objectID, objectType, xAxis, yAxis, isNew);
         SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID);
+        this.isBlocked = false;
     }
 
+    public void setIsBlockedBool (boolean isBlocked) {
+        this.isBlocked = isBlocked;
+    }
 }
 
 class Harbor extends MapObject {
