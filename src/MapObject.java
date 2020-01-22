@@ -64,6 +64,9 @@ class Ship extends MapObject {
 
     // get and set methods further down
     private int containerSum = SQL.getObjectPostInt(this.objectID, SQL.qObjConSum);
+    private int cruiseVelocity = 50;
+    private int maxVelocity = 100;
+    private int currentVelocity = this.maxVelocity;
 
     Ship(String objectID,
          String objectType,
@@ -84,6 +87,24 @@ class Ship extends MapObject {
     public void setContainerAmount(int newValue) { SQL.setObjectColumnInt(SQL.qObjConSum, newValue, this.objectID); }
 
     public int getContainerAmount() { return this.containerSum; }
+
+    public int getCurrentVelocity() {
+        return this.currentVelocity;
+    }
+
+    public void setCurrentVelocity (String maxOrCruise) {
+        switch (maxOrCruise) {
+            case "max":
+                this.currentVelocity = this.maxVelocity;
+                break;
+            case "cruise":
+                this.currentVelocity = this.cruiseVelocity;
+                break;
+            case "speedrun":
+                this.currentVelocity = 1000;
+                break;
+        }
+    }
 
 }
 
