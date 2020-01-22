@@ -139,8 +139,7 @@ public class SQL {
 
     private String getRunSQLQuery(String query, String returnColumn, String result) {
         try {
-            Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            Statement myStatement = myConn.createStatement();
+            Statement myStatement = this.SQL.createStatement();
             ResultSet myResult = myStatement.executeQuery(query);
             myResult.next();
             result = myResult.getString(returnColumn);

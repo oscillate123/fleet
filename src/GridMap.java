@@ -14,7 +14,7 @@ public class GridMap {
 
     void drawMap() {
         Map<String, String> boatCoords = Main.getCoordMap("ship", this.sqlConnection);
-        Map<String, String> harborCoords = Main.getCoordMap("ship", this.sqlConnection);
+        Map<String, String> harborCoords = Main.getCoordMap("harbor", this.sqlConnection);
         for (int y = 1; y <= this.size; y++) {
             for (int x = 1; x <= this.size; x++) {
                 char objChar = ' ';
@@ -69,7 +69,7 @@ public class GridMap {
             else if (shipY > destY)
                 shipY--;
             System.out.println("I want to go to x=" + shipX + " y=" + shipY);
-            if (checkNextSquare(destX, destY)){
+            if (checkNextSquare(shipX, shipY)){
                 this.sqlConnection.setObjectColumnInt("x_axis", destX, objID);
                 this.sqlConnection.setObjectColumnInt("y_axis", destY, objID);
             }
