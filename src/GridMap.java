@@ -30,12 +30,17 @@ public class GridMap {
                     int boatX = Integer.parseInt(temp[0]);
                     int boatY = Integer.parseInt(temp[1]);
                     if (boatX == x && boatY == y)
-                        objChar = 'B';
+                        objChar = boat.toUpperCase().charAt(0);
                 }
 
                 System.out.print("[" + objChar + "]");
             }
             System.out.print("\n");
+        }
+        System.out.print("H = Harbor, D = Dock \nBoats: ");
+        for(String boat : boatCoords.keySet()){
+            boat = boat.substring(0, 1).toUpperCase() + boat.substring(1);
+            System.out.print(boat.charAt(0) + " = " + boat + ", ");
         }
     }
 
@@ -43,40 +48,64 @@ public class GridMap {
         Scanner input = new Scanner(System.in);
         int x = sqlConnection.getObjectX(objID);
         int y = sqlConnection.getObjectY(objID);
+        System.out.println("\nYour current coordinates are: " + x + ", " + y);
         System.out.print("Move ship (N, NW, W, SW, S, SE, E, NE): ");
         String answer = input.nextLine().toUpperCase();
 
         switch (answer){
             case "N":
-                y--;
+                if (intValidator(y, '-'))
+                    y--;
                 break;
             case  "E":
-                x++;
+                if (intValidator(x, '+'))
+                    x++;
                 break;
             case "S":
-                y++;
+                if (intValidator(y, '+'))
+                    y++;
                 break;
             case "W":
-                x--;
+                if (intValidator(x, '-'))
+                    x--;
                 break;
             case "NW":
-                y--;
-                x--;
+                if (intValidator(x, '-') && (intValidator(y, '-'))) {
+                    y--;
+                    x--;
+                }
                 break;
             case "NE":
-                y--;
-                x++;
+                if (intValidator(x, '+') && (intValidator(y, '-'))) {
+                    y--;
+                    x++;
+                }
                 break;
             case "SE":
-                y++;
-                x++;
+                if (intValidator(x, '+') && (intValidator(y, '+'))) {
+                    y++;
+                    x++;
+                }
                 break;
             case "SW":
-                y++;
-                x--;
+                if (intValidator(x, '-') && (intValidator(y, '+'))) {
+                    y++;
+                    x--;
+                }
                 break;
         }
         sqlConnection.setObjectColumnInt("x_axis", x, objID);
         sqlConnection.setObjectColumnInt("y_axis", y, objID);
+    }
+
+    public boolean intValidator(int num, char direction) {
+        boolean accept = true;
+
+        if ((num == 1 && direction == '-') | (num == this.size && direction == '+')) {
+            accept = false;
+            System.out.println("You can't leave the map");
+        }
+
+        return accept;
     }
 }

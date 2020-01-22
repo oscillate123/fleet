@@ -12,17 +12,28 @@ public class Main {
 
         Map<String, String> boatCoords = getCoordMap("ship", sqlConnection);
         Map<String, String> harborCoords = getCoordMap("harbor", sqlConnection);
+        ArrayList<String> ships = sqlConnection.getAllObjectIDs("ship", true);
+        for (String temp : ships) {
+            String str = temp.substring(0, 1).toUpperCase() + temp.substring(1);
+            ships.set(ships.indexOf(temp), str);
+        }
+        Scanner entry = new Scanner(System.in);
+        System.out.println("Welcome Skipper!");
+        System.out.println("These ships at your disposal:");
+        System.out.println(ships);
+        System.out.print("Choose your ship ");
+        String shipName = entry.nextLine();
 
-        while (true) {
+        boolean moving = true;
+        while (moving) {
             cls();
             newMap.drawMap(boatCoords, harborCoords);
-            newMap.updateCord("titanic", sqlConnection);
+            newMap.updateCord(shipName, sqlConnection);
             boatCoords = getCoordMap("ship", sqlConnection);
         }
         // Always close connection before the program ends.
         sqlConnection.closeSQLConnection();
     }
-
 
     public static Map<String, String> getCoordMap(String type, SQL sqlConnection) {
         ArrayList<String> x = sqlConnection.getAllObjectIDs(type, true);
