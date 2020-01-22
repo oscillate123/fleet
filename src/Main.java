@@ -19,6 +19,8 @@ public class Main {
             newMap.updateCord("titanic", sqlConnection);
             boatCoords = getCoordMap("ship", sqlConnection);
         }
+        // Always close connection before the program ends.
+        sqlConnection.closeSQLConnection();
     }
 
 

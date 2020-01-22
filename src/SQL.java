@@ -17,7 +17,6 @@ public class SQL {
 
     // tables
     private final String OBJECTTABLE  = "object_state_log";
-    private final String TRAVELLOG    = "travel_log";
 
     // columns for OBJECTTABLE
     public final String qObjID = "object_id";
@@ -27,17 +26,15 @@ public class SQL {
     public final String qXAxis = "x_axis";
     public final String qYAxis = "y_axis";
 
-    // columns for TRAVELLOG
-    public final String qLogID = "log_id";
-    public final String qLogTime = "log_time";
-
-
     // constructor
 
     SQL() throws SQLException {
         this.SQL = DriverManager.getConnection(URL, USERNAME, PASSWORD);;
     }
 
+    // getters
+
+    public void closeSQLConnection() throws SQLException {this.SQL.close();}
 
     /*
     *
@@ -45,36 +42,42 @@ public class SQL {
     *
     * */
 
-    public ArrayList<String> getAllObjectIDs(String objectType, boolean check) {
+    public ArrayList<String> getAllObjectIDs(String objectType, boolean checkFor) {
         // returns an array list with string array lists, one string array list is the content of one post in SQL DB
-        String sql_query = "select * from " + OBJECTTABLE;
-
-        if (check) {
-            sql_query = "select * from " + OBJECTTABLE + " where object_type = '" + objectType + "';";
-        }
 
         ArrayList<String> listOfObjectIDs = new ArrayList<>();
 
         try {
-            Statement myStatement = this.SQL.createStatement();
-            ResultSet myResult = myStatement.executeQuery(sql_query);
+            PreparedStatement myStatement = this.SQL.prepareStatement("select * from ?");
+            myStatement.setString(1, this.OBJECTTABLE);
+
+            if (checkFor) {
+                myStatement = this.SQL.prepareStatement("select * from object_state_log where object_type = ?;");
+                myStatement.setString(1, objectType);
+            }
+
+            ResultSet myResult = myStatement.executeQuery();
             while (myResult.next()) {
                 String objectID = myResult.getString("object_id");
                 listOfObjectIDs.add(objectID);
             }
+            myResult.close();
+            myStatement.close();
         } catch (Exception exc) { exc.printStackTrace(); }
+
         return listOfObjectIDs;
     }
 
     public ArrayList<String> getOneObjectAsArrayList(String findObjectID) {
         // returns an array list with string array lists, one string array list is the content of one post in SQL DB
 
-        String sql_query = "select * from " + OBJECTTABLE + " where object_id = '" + findObjectID + "';";
         ArrayList<String> resultList = new ArrayList<>();
         try {
-            Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            Statement myStatement = this.SQL.createStatement();
-            ResultSet myResult = myStatement.executeQuery(sql_query);
+            PreparedStatement myStatement = this.SQL.prepareStatement(
+                    "select * from object_state_log where object_id = ? ;");
+            myStatement.setString(1, findObjectID);
+
+            ResultSet myResult = myStatement.executeQuery();
             while (myResult.next()) {
                 String objectID = myResult.getString("object_id");
                 String objectType = myResult.getString("object_type");
@@ -89,8 +92,10 @@ public class SQL {
                 resultList.add(toString(containerSum));
                 resultList.add(toString(xAxis));
                 resultList.add(toString(yAxis));
-
             }
+
+            myResult.close();
+            myStatement.close();
         } catch (Exception exc) { exc.printStackTrace(); }
         return resultList;
     }
@@ -132,7 +137,8 @@ public class SQL {
             ResultSet myResult = myStatement.executeQuery(query);
             myResult.next();
             result = myResult.getString(returnColumn);
-            myConn.close();
+            myResult.close();
+            myStatement.close();
         } catch (Exception exc) {exc.printStackTrace();}
         return result;
     }
