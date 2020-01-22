@@ -22,7 +22,7 @@ public class Main {
     }
 
     public static Map<String, String> getCoordMap(SQL sqlConnection) {
-        ArrayList<String> x = sqlConnection.getAllObjectIDs();
+        ArrayList<String> x = sqlConnection.getAllObjectIDs("ship", true);
         Map<String, String> coordMap = new HashMap<String, String>();
         for (String objID : x) {
             int xCoord = sqlConnection.getObjectX(objID);

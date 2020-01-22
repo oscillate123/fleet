@@ -1,4 +1,5 @@
 import java.sql.SQLException;
+import java.util.Map;
 
 public class MapObject {
 
@@ -45,6 +46,18 @@ class Ocean extends MapObject {
         SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID);
     }
 
+}
+
+class Harbor extends MapObject {
+
+    Harbor(String objectID,
+           String objectType,
+           int xAxis,
+           int yAxis,
+           boolean isNew) throws SQLException {
+
+        super(objectID, objectType, xAxis, yAxis, isNew);
+    }
 }
 
 class Ship extends MapObject {
