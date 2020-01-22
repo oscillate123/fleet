@@ -8,14 +8,21 @@ public class Main {
         //SQL.getDatabases();
         SQL sqlConnection = new SQL();
         GridMap newMap = new GridMap(25);
+
         Map<String, String> boatCoords = getCoordMap(sqlConnection);
 
-        newMap.drawMap(boatCoords);
+        Map<String, String> harborCoords = new HashMap<String, String>();
+        harborCoords.put("NW_Harbor", "1,1");
+        harborCoords.put("NE_Harbor", "25,1");
+        harborCoords.put("SW_Harbor", "1,25");
+        harborCoords.put("SE_Harbor", "25,25");
+        harborCoords.put("C_Harbor", "13,13");
 
+        newMap.drawMap(boatCoords, harborCoords);
     }
 
     public static Map<String, String> getCoordMap(SQL sqlConnection) {
-        ArrayList<String> x = sqlConnection.getAllObjectIDs();
+        ArrayList<String> x = sqlConnection.getAllObjectIDs("ship", true);
         Map<String, String> coordMap = new HashMap<String, String>();
         for (String objID : x) {
             int xCoord = sqlConnection.getObjectX(objID);
