@@ -131,7 +131,7 @@ public class SQL {
     }
 
     public String getObjectTypeBasedOnCoordinate(int x, int y) {
-        String sqlQuery = "select * from " + this.OBJECTTABLE + " where x_axis = '" + x + "' and y_axis = '" + y + "';";
+        String sqlQuery = "select * from " + this.OBJECTTABLE + " where x_axis = " + x + " and y_axis = " + y + ";";
         String result = "No return: " + "object_type" + " on " + this.OBJECTTABLE;
 
         return getRunSQLQuery(sqlQuery, "object_type", result);
@@ -141,8 +141,9 @@ public class SQL {
         try {
             Statement myStatement = this.SQL.createStatement();
             ResultSet myResult = myStatement.executeQuery(query);
-            myResult.next();
-            result = myResult.getString(returnColumn);
+            while (myResult.next()) {
+                result = myResult.getString(returnColumn);
+            }
             myResult.close();
             myStatement.close();
         } catch (Exception exc) {exc.printStackTrace();}
