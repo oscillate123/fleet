@@ -136,6 +136,8 @@ public class GridMap {
         } else if (newX > this.size || newX < 1 || newY > this.size || newY < 1) {
             allowMovement = false;
             System.out.println("You can't leave the map");
+        } else {
+            System.out.println(objectInNextSquare);
         }
 
         return  allowMovement;
