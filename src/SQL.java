@@ -45,9 +45,14 @@ public class SQL {
     *
     * */
 
-    public ArrayList<String> getAllObjectIDs() {
+    public ArrayList<String> getAllObjectIDs(String objectType, boolean check) {
         // returns an array list with string array lists, one string array list is the content of one post in SQL DB
-        String sql_query = "select * from " + OBJECTTABLE + ";";
+        String sql_query = "select * from " + OBJECTTABLE;
+
+        if (check) {
+            sql_query = "select * from " + OBJECTTABLE + " where object_type = '" + objectType + "';";
+        }
+
         ArrayList<String> listOfObjectIDs = new ArrayList<>();
 
         try {
