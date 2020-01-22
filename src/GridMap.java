@@ -38,4 +38,45 @@ public class GridMap {
             System.out.print("\n");
         }
     }
+
+    public void updateCord(String objID, SQL sqlConnection){
+        Scanner input = new Scanner(System.in);
+        int x = sqlConnection.getObjectX(objID);
+        int y = sqlConnection.getObjectY(objID);
+        System.out.print("Move ship (N, NW, W, SW, S, SE, E, NE): ");
+        String answer = input.nextLine().toUpperCase();
+
+        switch (answer){
+            case "N":
+                y--;
+                break;
+            case  "E":
+                x++;
+                break;
+            case "S":
+                y++;
+                break;
+            case "W":
+                x--;
+                break;
+            case "NW":
+                y--;
+                x--;
+                break;
+            case "NE":
+                y--;
+                x++;
+                break;
+            case "SE":
+                y++;
+                x++;
+                break;
+            case "SW":
+                y++;
+                x--;
+                break;
+        }
+        sqlConnection.setObjectColumnInt("x_axis", x, objID);
+        sqlConnection.setObjectColumnInt("y_axis", y, objID);
+    }
 }
