@@ -9,6 +9,7 @@ public class MapObject {
     protected int xAxis;
     protected int yAxis;
     protected boolean isDocked;
+    protected boolean isBlocked = true;
 
     MapObject(String objectID, String objectType, int xAxis, int yAxis, boolean isNew) throws SQLException {
         this.SQL = new SQL();
@@ -44,8 +45,12 @@ class Ocean extends MapObject {
 
         super(objectID, objectType, xAxis, yAxis, isNew);
         SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID);
+        this.isBlocked = false;
     }
 
+    public void setIsBlockedBool (boolean isBlocked) {
+        this.isBlocked = isBlocked;
+    }
 }
 
 class Harbor extends MapObject {
@@ -64,6 +69,9 @@ class Ship extends MapObject {
 
     // get and set methods further down
     private int containerSum = SQL.getObjectPostInt(this.objectID, SQL.qObjConSum);
+    private int cruiseVelocity = 50;
+    private int maxVelocity = 100;
+    private int currentVelocity = this.maxVelocity;
 
     Ship(String objectID,
          String objectType,
@@ -85,12 +93,22 @@ class Ship extends MapObject {
 
     public int getContainerAmount() { return this.containerSum; }
 
-}
+    public int getCurrentVelocity() {
+        return this.currentVelocity;
+    }
 
-//påbörjat class för lassa/lossa
-class LoadUnload{
-    public int containerSum;
-
-    LoadUnload(int containerSum){this.containerSum = containerSum;}
+    public void setCurrentVelocity (String maxOrCruise) {
+        switch (maxOrCruise) {
+            case "max":
+                this.currentVelocity = this.maxVelocity;
+                break;
+            case "cruise":
+                this.currentVelocity = this.cruiseVelocity;
+                break;
+            case "speedrun":
+                this.currentVelocity = 1000;
+                break;
+        }
+    }
 
 }

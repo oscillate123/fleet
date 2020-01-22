@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.*;
 import java.sql.*;
 
@@ -9,20 +10,22 @@ public class Main {
         SQL sqlConnection = new SQL();
         GridMap newMap = new GridMap(25);
 
-        Map<String, String> boatCoords = getCoordMap(sqlConnection);
+        Map<String, String> boatCoords = getCoordMap("ship", sqlConnection);
+        Map<String, String> harborCoords = getCoordMap("harbor", sqlConnection);
 
-        Map<String, String> harborCoords = new HashMap<String, String>();
-        harborCoords.put("NW_Harbor", "1,1");
-        harborCoords.put("NE_Harbor", "25,1");
-        harborCoords.put("SW_Harbor", "1,25");
-        harborCoords.put("SE_Harbor", "25,25");
-        harborCoords.put("C_Harbor", "13,13");
-
-        newMap.drawMap(boatCoords, harborCoords);
+        while (true) {
+            cls();
+            newMap.drawMap(boatCoords, harborCoords);
+            newMap.updateCord("titanic", sqlConnection);
+            boatCoords = getCoordMap("ship", sqlConnection);
+        }
+        // Always close connection before the program ends.
+        sqlConnection.closeSQLConnection();
     }
 
-    public static Map<String, String> getCoordMap(SQL sqlConnection) {
-        ArrayList<String> x = sqlConnection.getAllObjectIDs("ship", true);
+
+    public static Map<String, String> getCoordMap(String type, SQL sqlConnection) {
+        ArrayList<String> x = sqlConnection.getAllObjectIDs(type, true);
         Map<String, String> coordMap = new HashMap<String, String>();
         for (String objID : x) {
             int xCoord = sqlConnection.getObjectX(objID);
@@ -35,5 +38,18 @@ public class Main {
     public static void print_string(String text) { System.out.println(text); }
     public static void print_int(int x) { System.out.println(x); }
     public static int strToInt(String str) { return Integer.parseInt(str); }
+
+
+    public static void cls()
+    {
+        try
+        {
+            new ProcessBuilder("cmd","/c","cls").inheritIO().start().waitFor();
+            System.out.println("\n\n\n");
+        }catch(Exception E)
+        {
+            System.out.println(E);
+        }
+    }
 
 }
