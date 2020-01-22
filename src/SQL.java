@@ -42,19 +42,21 @@ public class SQL {
     *
     * */
 
-    public ArrayList<String> getAllObjectIDs(String objectType, boolean check) {
+    public ArrayList<String> getAllObjectIDs(String objectType, boolean checkFor) {
         // returns an array list with string array lists, one string array list is the content of one post in SQL DB
-        String sql_query = "select * from " + OBJECTTABLE;
-
-        if (check) {
-            sql_query = "select * from " + OBJECTTABLE + " where object_type = '" + objectType + "';";
-        }
 
         ArrayList<String> listOfObjectIDs = new ArrayList<>();
 
         try {
-            Statement myStatement = this.SQL.createStatement();
-            ResultSet myResult = myStatement.executeQuery(sql_query);
+            PreparedStatement myStatement = this.SQL.prepareStatement("select * from ?");
+            myStatement.setString(1, this.OBJECTTABLE);
+
+            if (checkFor) {
+                myStatement = this.SQL.prepareStatement("select * from object_state_log where object_type = ?;");
+                myStatement.setString(1, objectType);
+            }
+
+            ResultSet myResult = myStatement.executeQuery();
             while (myResult.next()) {
                 String objectID = myResult.getString("object_id");
                 listOfObjectIDs.add(objectID);
@@ -62,18 +64,20 @@ public class SQL {
             myResult.close();
             myStatement.close();
         } catch (Exception exc) { exc.printStackTrace(); }
+
         return listOfObjectIDs;
     }
 
     public ArrayList<String> getOneObjectAsArrayList(String findObjectID) {
         // returns an array list with string array lists, one string array list is the content of one post in SQL DB
 
-        String sql_query = "select * from " + OBJECTTABLE + " where object_id = '" + findObjectID + "';";
         ArrayList<String> resultList = new ArrayList<>();
         try {
-            Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-            Statement myStatement = this.SQL.createStatement();
-            ResultSet myResult = myStatement.executeQuery(sql_query);
+            PreparedStatement myStatement = this.SQL.prepareStatement(
+                    "select * from object_state_log where object_id = ? ;");
+            myStatement.setString(1, findObjectID);
+
+            ResultSet myResult = myStatement.executeQuery();
             while (myResult.next()) {
                 String objectID = myResult.getString("object_id");
                 String objectType = myResult.getString("object_type");
@@ -88,7 +92,6 @@ public class SQL {
                 resultList.add(toString(containerSum));
                 resultList.add(toString(xAxis));
                 resultList.add(toString(yAxis));
-
             }
 
             myResult.close();
