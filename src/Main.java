@@ -12,6 +12,8 @@ public class Main {
 
         newMap.drawMap(boatCoords);
 
+        // Always close connection before the program ends.
+        sqlConnection.closeSQLConnection();
     }
 
     public static Map<String, String> getCoordMap(SQL sqlConnection) {
@@ -28,5 +30,4 @@ public class Main {
     public static void print_string(String text) { System.out.println(text); }
     public static void print_int(int x) { System.out.println(x); }
     public static int strToInt(String str) { return Integer.parseInt(str); }
-
 }

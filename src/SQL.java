@@ -17,7 +17,6 @@ public class SQL {
 
     // tables
     private final String OBJECTTABLE  = "object_state_log";
-    private final String TRAVELLOG    = "travel_log";
 
     // columns for OBJECTTABLE
     public final String qObjID = "object_id";
@@ -27,17 +26,15 @@ public class SQL {
     public final String qXAxis = "x_axis";
     public final String qYAxis = "y_axis";
 
-    // columns for TRAVELLOG
-    public final String qLogID = "log_id";
-    public final String qLogTime = "log_time";
-
-
     // constructor
 
     SQL() throws SQLException {
         this.SQL = DriverManager.getConnection(URL, USERNAME, PASSWORD);;
     }
 
+    // getters
+
+    public void closeSQLConnection() throws SQLException {this.SQL.close();}
 
     /*
     *
@@ -62,6 +59,8 @@ public class SQL {
                 String objectID = myResult.getString("object_id");
                 listOfObjectIDs.add(objectID);
             }
+            myResult.close();
+            myStatement.close();
         } catch (Exception exc) { exc.printStackTrace(); }
         return listOfObjectIDs;
     }
@@ -91,6 +90,9 @@ public class SQL {
                 resultList.add(toString(yAxis));
 
             }
+
+            myResult.close();
+            myStatement.close();
         } catch (Exception exc) { exc.printStackTrace(); }
         return resultList;
     }
@@ -132,7 +134,8 @@ public class SQL {
             ResultSet myResult = myStatement.executeQuery(query);
             myResult.next();
             result = myResult.getString(returnColumn);
-            myConn.close();
+            myResult.close();
+            myStatement.close();
         } catch (Exception exc) {exc.printStackTrace();}
         return result;
     }
