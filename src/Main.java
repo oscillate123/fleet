@@ -13,7 +13,8 @@ public class Main {
         Map<String, String> boatCoords = getCoordMap("ship", sqlConnection);
         Map<String, String> harborCoords = getCoordMap("harbor", sqlConnection);
 
-        while (true) {
+        boolean moving = true;
+        while (moving) {
             cls();
             newMap.drawMap(boatCoords, harborCoords);
             newMap.updateCord("titanic", sqlConnection);
