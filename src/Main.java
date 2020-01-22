@@ -3,7 +3,7 @@ import java.util.*;
 import java.sql.*;
 
 public class Main {
-    public static void main(String[] args) throws SQLException{
+    public static void main(String[] args) throws SQLException, InterruptedException {
         //print_string("  -- Hello ladies and gentlemen this is your Main Method speaking. We are now flying --  ");
         //System.out.println("testing");
         //SQL.getDatabases();

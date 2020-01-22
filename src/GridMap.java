@@ -47,7 +47,7 @@ public class GridMap {
         }
     }
 
-    public void autoMove(String objID, String destination, Map<String, String> harborCoords) {
+    public void autoMove(String objID, String destination, Map<String, String> harborCoords) throws InterruptedException {
         Map<String, String> boatCoords = Main.getCoordMap("ship", this.sqlConnection);
         int destX = this.sqlConnection.getObjectX(destination);
         int destY = this.sqlConnection.getObjectY(destination);
@@ -70,8 +70,12 @@ public class GridMap {
                 shipY--;
             System.out.println("I want to go to x=" + shipX + " y=" + shipY);
             if (checkNextSquare(shipX, shipY)){
-                this.sqlConnection.setObjectColumnInt("x_axis", destX, objID);
-                this.sqlConnection.setObjectColumnInt("y_axis", destY, objID);
+                this.sqlConnection.setObjectColumnInt("x_axis", shipX, objID);
+                this.sqlConnection.setObjectColumnInt("y_axis", shipY, objID);
+            } else {
+                // Flyttar sig i x-led om en båt är i vägen
+                // Flyttar sig dock också när en hamn är i vägen:/
+                shipX++;
             }
             this.drawMap();
         }
@@ -120,8 +124,8 @@ public class GridMap {
             this.sqlConnection.setObjectColumnInt("x_axis", x, objID);
             this.sqlConnection.setObjectColumnInt("y_axis", y, objID);
         }
-
     }
+
 
     public boolean checkNextSquare(int newX, int newY) {
         String objectInNextSquare = this.sqlConnection.getObjectTypeBasedOnCoordinate(newX, newY);
@@ -136,10 +140,7 @@ public class GridMap {
         } else if (newX > this.size || newX < 1 || newY > this.size || newY < 1) {
             allowMovement = false;
             System.out.println("You can't leave the map");
-        } else {
-            System.out.println(objectInNextSquare);
         }
-
         return  allowMovement;
     }
 }
