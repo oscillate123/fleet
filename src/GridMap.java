@@ -14,7 +14,7 @@ public class GridMap {
 
     void drawMap() {
         Map<String, String> boatCoords = Main.getCoordMap("ship", this.sqlConnection);
-        Map<String, String> harborCoords = Main.getCoordMap("ship", this.sqlConnection);
+        Map<String, String> harborCoords = Main.getCoordMap("harbor", this.sqlConnection);
         for (int y = 1; y <= this.size; y++) {
             for (int x = 1; x <= this.size; x++) {
                 char objChar = ' ';
@@ -47,7 +47,7 @@ public class GridMap {
         }
     }
 
-    public void autoMove(String objID, String destination, Map<String, String> harborCoords) {
+    public void autoMove(String objID, String destination, Map<String, String> harborCoords) throws InterruptedException {
         Map<String, String> boatCoords = Main.getCoordMap("ship", this.sqlConnection);
         int destX = this.sqlConnection.getObjectX(destination);
         int destY = this.sqlConnection.getObjectY(destination);
@@ -69,9 +69,13 @@ public class GridMap {
             else if (shipY > destY)
                 shipY--;
             System.out.println("I want to go to x=" + shipX + " y=" + shipY);
-            if (checkNextSquare(destX, destY)){
-                this.sqlConnection.setObjectColumnInt("x_axis", destX, objID);
-                this.sqlConnection.setObjectColumnInt("y_axis", destY, objID);
+            if (checkNextSquare(shipX, shipY)){
+                this.sqlConnection.setObjectColumnInt("x_axis", shipX, objID);
+                this.sqlConnection.setObjectColumnInt("y_axis", shipY, objID);
+            } else {
+                // Flyttar sig i x-led om en båt är i vägen
+                // Flyttar sig dock också när en hamn är i vägen:/
+                shipX++;
             }
             this.drawMap();
         }
@@ -120,8 +124,8 @@ public class GridMap {
             this.sqlConnection.setObjectColumnInt("x_axis", x, objID);
             this.sqlConnection.setObjectColumnInt("y_axis", y, objID);
         }
-
     }
+
 
     public boolean checkNextSquare(int newX, int newY) {
         String objectInNextSquare = this.sqlConnection.getObjectTypeBasedOnCoordinate(newX, newY);
@@ -137,7 +141,6 @@ public class GridMap {
             allowMovement = false;
             System.out.println("You can't leave the map");
         }
-
         return  allowMovement;
     }
 }
