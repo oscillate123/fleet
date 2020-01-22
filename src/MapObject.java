@@ -107,11 +107,3 @@ class Ship extends MapObject {
     }
 
 }
-
-//påbörjat class för lassa/lossa
-class LoadUnload{
-    public int containerSum;
-
-    LoadUnload(int containerSum){this.containerSum = containerSum;}
-
-}
