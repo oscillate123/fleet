@@ -1,16 +1,20 @@
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public class GridMap {
     int size;
     int mapCenter;
+    SQL sqlConnection;
 
-    public GridMap(int mapSize) {
+    public GridMap(int mapSize, SQL sqlConnection) {
         this.size = mapSize;
         mapCenter = size/2+1;
-
+        this.sqlConnection = sqlConnection;
     }
 
-    void drawMap(Map<String, String> boatCoords, Map<String, String> harborCoords) {
+    void drawMap() {
+        Map<String, String> boatCoords = Main.getCoordMap("ship", this.sqlConnection);
+        Map<String, String> harborCoords = Main.getCoordMap("ship", this.sqlConnection);
         for (int y = 1; y <= this.size; y++) {
             for (int x = 1; x <= this.size; x++) {
                 char objChar = ' ';
@@ -39,73 +43,101 @@ public class GridMap {
         }
         System.out.print("H = Harbor, D = Dock \nBoats: ");
         for(String boat : boatCoords.keySet()){
-            boat = boat.substring(0, 1).toUpperCase() + boat.substring(1);
-            System.out.print(boat.charAt(0) + " = " + boat + ", ");
+            System.out.print(Main.capitalize(boat).charAt(0) + " = " + Main.capitalize(boat) + ", ");
         }
     }
 
-    public void updateCord(String objID, SQL sqlConnection){
+    public void autoMove(String objID, String destination, Map<String, String> harborCoords) {
+        Map<String, String> boatCoords = Main.getCoordMap("ship", this.sqlConnection);
+        int destX = this.sqlConnection.getObjectX(destination);
+        int destY = this.sqlConnection.getObjectY(destination);
+        int shipX = this.sqlConnection.getObjectX(objID);
+        int shipY = this.sqlConnection.getObjectY(objID);
+
+
+        while (shipX != destX || shipY != destY) {
+            shipX = this.sqlConnection.getObjectX(objID);
+            shipY = this.sqlConnection.getObjectY(objID);
+            Main.cls();
+            boatCoords = Main.getCoordMap("ship", this.sqlConnection);
+            if (shipX < destX)
+                shipX++;
+            else if (shipX > destX)
+                shipX--;
+            if (shipY < destY)
+                shipY++;
+            else if (shipY > destY)
+                shipY--;
+            System.out.println("I want to go to x=" + shipX + " y=" + shipY);
+            if (checkNextSquare(destX, destY)){
+                this.sqlConnection.setObjectColumnInt("x_axis", destX, objID);
+                this.sqlConnection.setObjectColumnInt("y_axis", destY, objID);
+            }
+            this.drawMap();
+        }
+
+    }
+
+    public void updateCord(String objID){
         Scanner input = new Scanner(System.in);
-        int x = sqlConnection.getObjectX(objID);
-        int y = sqlConnection.getObjectY(objID);
+        int x = this.sqlConnection.getObjectX(objID);
+        int y = this.sqlConnection.getObjectY(objID);
         System.out.println("\nYour current coordinates are: " + x + ", " + y);
         System.out.print("Move ship (N, NW, W, SW, S, SE, E, NE): ");
         String answer = input.nextLine().toUpperCase();
 
         switch (answer){
             case "N":
-                if (intValidator(y, '-'))
-                    y--;
+                y--;
                 break;
             case  "E":
-                if (intValidator(x, '+'))
-                    x++;
+                x++;
                 break;
             case "S":
-                if (intValidator(y, '+'))
-                    y++;
+                y++;
                 break;
             case "W":
-                if (intValidator(x, '-'))
-                    x--;
+                x--;
                 break;
             case "NW":
-                if (intValidator(x, '-') && (intValidator(y, '-'))) {
-                    y--;
-                    x--;
-                }
+                y--;
+                x--;
                 break;
             case "NE":
-                if (intValidator(x, '+') && (intValidator(y, '-'))) {
-                    y--;
-                    x++;
-                }
+                y--;
+                x++;
                 break;
             case "SE":
-                if (intValidator(x, '+') && (intValidator(y, '+'))) {
-                    y++;
-                    x++;
-                }
+                y++;
+                x++;
                 break;
             case "SW":
-                if (intValidator(x, '-') && (intValidator(y, '+'))) {
-                    y++;
-                    x--;
-                }
+                y++;
+                x--;
                 break;
         }
-        sqlConnection.setObjectColumnInt("x_axis", x, objID);
-        sqlConnection.setObjectColumnInt("y_axis", y, objID);
+        if (checkNextSquare(x, y)){
+            this.sqlConnection.setObjectColumnInt("x_axis", x, objID);
+            this.sqlConnection.setObjectColumnInt("y_axis", y, objID);
+        }
+
     }
 
-    public boolean intValidator(int num, char direction) {
-        boolean accept = true;
-
-        if ((num == 1 && direction == '-') | (num == this.size && direction == '+')) {
-            accept = false;
+    public boolean checkNextSquare(int newX, int newY) {
+        String objectInNextSquare = this.sqlConnection.getObjectTypeBasedOnCoordinate(newX, newY);
+        boolean allowMovement = true;
+        if (objectInNextSquare.equals("ship")) {
+            allowMovement = false;
+            String shipInWay = Main.capitalize(this.sqlConnection.getObjectBasedOnCoordinate(newX, newY));
+            System.out.println(shipInWay + " is in the way");
+        } else if (objectInNextSquare.equals("harbor")){
+            allowMovement = false;
+            System.out.println("There is a " + objectInNextSquare + " in the way.");
+        } else if (newX > this.size || newX < 1 || newY > this.size || newY < 1) {
+            allowMovement = false;
             System.out.println("You can't leave the map");
         }
 
-        return accept;
+        return  allowMovement;
     }
 }
