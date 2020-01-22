@@ -8,29 +8,35 @@ public class Main {
         //System.out.println("testing");
         //SQL.getDatabases();
         SQL sqlConnection = new SQL();
-        GridMap newMap = new GridMap(25);
+        GridMap newMap = new GridMap(25, sqlConnection);
 
         Map<String, String> boatCoords = getCoordMap("ship", sqlConnection);
         Map<String, String> harborCoords = getCoordMap("harbor", sqlConnection);
-        ArrayList<String> ships = sqlConnection.getAllObjectIDs("ship", true);
-        for (String temp : ships) {
-            String str = temp.substring(0, 1).toUpperCase() + temp.substring(1);
-            ships.set(ships.indexOf(temp), str);
-        }
+
         Scanner entry = new Scanner(System.in);
         System.out.println("Welcome Skipper!");
-        System.out.println("These ships at your disposal:");
-        System.out.println(ships);
-        System.out.print("Choose your ship ");
-        String shipName = entry.nextLine();
-
-        boolean moving = true;
-        while (moving) {
-            cls();
-            newMap.drawMap(boatCoords, harborCoords);
-            newMap.updateCord(shipName, sqlConnection);
-            boatCoords = getCoordMap("ship", sqlConnection);
+        System.out.println("These ships at your disposal: ");
+        for (String ship : boatCoords.keySet()) {
+            System.out.print(ship + "\n");
         }
+        System.out.print("Choose your ship: ");
+        String shipName = entry.nextLine().toLowerCase();
+
+        System.out.print("Do you want to go manually [1] or automatically [2]: ");
+        int test = entry.nextInt();
+        if (test == 1) {
+            boolean moving = true;
+            while (moving) {
+                cls();
+                newMap.drawMap();
+                newMap.updateCord(shipName);
+            }
+        } else if (test == 2) {
+            System.out.print("Where do you want to go? Enter destination Harbor: ");
+            String destination = "sw_harbor";
+            newMap.autoMove(shipName, destination, harborCoords);
+        }
+
         // Always close connection before the program ends.
         sqlConnection.closeSQLConnection();
     }
@@ -63,4 +69,7 @@ public class Main {
         }
     }
 
+    public static String capitalize(String str) {
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
 }
