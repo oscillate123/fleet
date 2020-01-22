@@ -19,7 +19,6 @@ public class Main {
         harborCoords.put("C_Harbor", "13,13");
 
         newMap.drawMap(boatCoords, harborCoords);
-
     }
 
     public static Map<String, String> getCoordMap(SQL sqlConnection) {
