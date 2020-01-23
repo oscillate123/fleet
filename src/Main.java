@@ -32,11 +32,11 @@ public class Main {
         System.out.print("Do you want to go manually [1] or automatically [2]: ");
         int test = entry.nextInt();
         if (test == 1) {
-            boolean moving = true;
-            while (moving) {
-                cls();
-                newMap.drawMap();
-                moving = newMap.updateCord(myShip);
+            String dest = "";
+            for (String item : deliverySchedule){
+                dest = item.split(",")[0];
+                int container = Integer.parseInt(item.split(",")[1]);
+                newMap.updateCord(myShip, dest, container);
             }
         } else if (test == 2) {
             for (String item : deliverySchedule){
