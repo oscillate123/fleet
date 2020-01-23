@@ -14,6 +14,7 @@ public class SuppFunc {
     // print methods
     public static void print_string(String text) { System.out.println(text); }
     public static void print_int(int x) { System.out.println(x); }
+    public static void closeScan() { scan.close();}
 
     // convert methods
     public static int strToInt(String str) { return Integer.parseInt(str); }
@@ -28,11 +29,6 @@ public class SuppFunc {
     public static int getIntInput (String text) {
         print_string(text);
         return scan.nextInt();
-    }
-    public static boolean getBooleanInput (String text) {
-        print_string(text);
-        String input = scan.nextLine();
-        return input.equals("yes");
     }
 
     // lookup methods
@@ -55,32 +51,44 @@ public class SuppFunc {
     }
 
     // general support methods
+    public static boolean compareVal(int val1, int val2) {
+        return val1 > val2;
+    }
+
     public static ArrayList<String> getQueueFromUser(SQL sqlConnection, Ship ship) {
 
         ArrayList<String> harbors = sqlConnection.getAllObjectIDs("harbor", true);
         ArrayList<String> deliverySchedule = new ArrayList<>();
-        boolean continueLoop = false;
+        String continueOrder = "";
+        String stopp = "no";
         int maxUnload = ship.getContainerAmount();
         int unOrLoadAmount = 0;
 
-        while (!continueLoop & maxUnload > unOrLoadAmount-11) {
-            print_string("Available destinations: ");
-            for (String item : harbors) { print_string(item); }
-            print_string("");
+        if (maxUnload+1 < unOrLoadAmount) {
+            print_string("Ship is out of containers. Current order queue will be executed.");
+        }
+
+        while (!continueOrder.equals(stopp) & (maxUnload > unOrLoadAmount-11)) {
 
             String harborResult = "";
-            while (isStringInArray(harbors, harborResult)) {
-                harborResult = getStringInput("Which harbor do you want to go to?");
-                if (harborResult.equals("exit")) {
-                    return new ArrayList<String>(Arrays.asList("exit"));
+            while (!isStringInArray(harbors, harborResult)) {
+                print_string("\n\nAvailable destinations: ");
+                for (String item : harbors) { print_string(item); }
+                print_string("");
+
+                harborResult = getStringInput("Which harbor do you want to go to? Type 'cancel' to abort.");
+                if (harborResult.equals("cancel")) {
+                    return new ArrayList<String>(Arrays.asList("cancel"));
+                } else if (!isStringInArray(harbors, harborResult)) {
+                    print_string("\n" + harborResult + " is not a viable choice!");
                 }
             }
 
-            boolean isNotBigger = true;
+            boolean isNotBigger = false;
             int max = 11;
-            int containerAmount = 1000000000; // TODO: Make this part of the code more efficient
+            int containerAmount = 999999999; // TODO: Make this part of the code more efficient
 
-            while (containerAmount > max & isNotBigger) {
+            while (containerAmount > max & !isNotBigger) {
                 try {
                     String message1 = "\nUsage: '10' for getting 10 containers, and '-10' for dropping 10 containers.";
                     String message3 = "\nYou can maximally drop/retrieve 10 containers at the time.";
@@ -91,8 +99,8 @@ public class SuppFunc {
                     int newHarborContainerSum = harborContainerSum + containerAmount;
                     int newShipContainerSum = ship.getContainerAmount() + containerAmount;
 
-                    isNotBigger = compareVal(0, newHarborContainerSum);
-                    isNotBigger = compareVal(0, newShipContainerSum);
+                    isNotBigger = compareVal(newHarborContainerSum, 0);
+                    isNotBigger = compareVal(newShipContainerSum, 0);
 
                     if (!isNotBigger) {
                         print_string("You can not un/load " + containerAmount + " containers.");
@@ -104,15 +112,15 @@ public class SuppFunc {
                     print_string("Incorrect input.");
                 }
             }
-            unOrLoadAmount = unOrLoadAmount + containerAmount;
-            deliverySchedule.add(harborResult + "," + intToStr(containerAmount)); // adding ship info as a
-            continueLoop = getBooleanInput("Do you want to continue? Type 'yes' to continue");
+
+            Scanner fittkuk = new Scanner(System.in);
+            print_string("VILL DU LADDA IN EN TILL ORDER?!?!??!?!?!?! YES/NO");
+            continueOrder = fittkuk.nextLine();
+
+            unOrLoadAmount = unOrLoadAmount + containerAmount; // check if the route container drop amount is too much
+            deliverySchedule.add(harborResult + "," + intToStr(containerAmount)); // adding ship info to the array
         }
         return deliverySchedule;
-    }
-
-    public static boolean compareVal(int val1, int val2) {
-        return val1 > val2;
     }
 
 }

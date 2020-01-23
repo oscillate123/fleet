@@ -5,13 +5,13 @@ import java.sql.*;
 public class Main {
     public static void main(String[] args) throws SQLException, InterruptedException, IOException {
 
-        SQL sql = new SQL();
+        /* SQL sql = new SQL();
         Ship ship1 = new Ship("vasa", false, sql);
 
         ArrayList<String> kek = SuppFunc.getQueueFromUser(sql, ship1);
-        SuppFunc.print_string(kek.toString());
+        SuppFunc.print_string(kek.toString()); OSCAR SUDDAADE DHÄR
 
-        System.exit(0);
+        System.exit(0); */
 
         int gameMapSize = 25; //Här ändras storleken på kartan
 
@@ -19,12 +19,13 @@ public class Main {
         GridMap newMap = new GridMap(gameMapSize, sqlConnection);
 
         Map<String, String> boatCoords = getCoordMap("ship", sqlConnection);
-        ArrayList<String> deliverySchedule = new ArrayList<>();
+
+        /*ArrayList<String> deliverySchedule = new ArrayList<>();
         deliverySchedule.add("nw_harbor,10");
-        deliverySchedule.add("sw_harbor,-5");
+        deliverySchedule.add("sw_harbor,-5"); OSCAR SUDDADE DE HÄR
         deliverySchedule.add("se_harbor,15");
         deliverySchedule.add("c_harbor,-10");
-        deliverySchedule.add("ne_harbor,-5");
+        deliverySchedule.add("ne_harbor,-5");*/
 
         Scanner entry = new Scanner(System.in);
         System.out.println("Welcome Skipper!");
@@ -48,13 +49,17 @@ public class Main {
                 moving = newMap.updateCord(myShip);
             }
         } else if (test == 2) {
+
+            ArrayList<String> deliverySchedule = SuppFunc.getQueueFromUser(sqlConnection, myShip); // OSCAR LA TILL DEN HÄR
+
             for (String item : deliverySchedule){
                 String dest = item.split(",")[0];
                 int container = Integer.parseInt(item.split(",")[1]);
                 newMap.autoMove(myShip, dest, container);
             }
         }
-        // Always close connection before the program ends.
+        // Always close before the program ends.
+        SuppFunc.closeScan();
         entry.close();
         sqlConnection.closeSQLConnection();
     }
