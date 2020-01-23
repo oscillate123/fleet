@@ -10,17 +10,17 @@ public class MapObject {
     protected boolean isDocked;
     protected boolean isBlocked = true;
 
-    MapObject(String objectID, String objectType, int xAxis, int yAxis, boolean isNew) throws SQLException {
+    MapObject(String objectID/*, String objectType, int xAxis, int yAxis, boolean isNew*/) throws SQLException {
         this.SQL = new SQL();
-        if (isNew) {
+        /*if (isNew) {
             SQL.createNewObject(objectID, objectType, 0, 0, xAxis, yAxis);
-        } else {
-            this.objectID = objectID;
-            this.objectType = SQL.getObjectType(this.objectID);
-            this.isDocked = (SQL.getObjectPostInt(this.objectID, SQL.qObjDocked) == 1);
-            this.xAxis = SQL.getObjectX(this.objectID);
-            this.yAxis = SQL.getObjectY(this.objectID);
-        }
+        } else {}*/
+        this.objectID = objectID;
+        this.objectType = SQL.getObjectType(this.objectID);
+        this.isDocked = (SQL.getObjectPostInt(this.objectID, SQL.qObjDocked) == 1);
+        this.xAxis = SQL.getObjectX(this.objectID);
+        this.yAxis = SQL.getObjectY(this.objectID);
+
     }
 
     public boolean getIsDocked() { return this.isDocked; }
@@ -35,15 +35,15 @@ public class MapObject {
 
 class Ocean extends MapObject {
 
-    Ocean(String objectID,
+    Ocean(String objectID/*,
           String objectType,
           int isDocked,
           int xAxis,
           int yAxis,
-          boolean isNew) throws SQLException {
+          boolean isNew*/) throws SQLException {
 
-        super(objectID, objectType, xAxis, yAxis, isNew);
-        SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID);
+        super(objectID/*, objectType, xAxis, yAxis, isNew*/);
+        SQL.setObjectColumnInt(SQL.qObjDocked, 0, this.objectID);
         this.isBlocked = false;
     }
 
@@ -54,43 +54,42 @@ class Ocean extends MapObject {
 
 class Harbor extends MapObject {
 
-    Harbor(String objectID,
+    Harbor(String objectID/*,
            String objectType,
            int xAxis,
            int yAxis,
-           boolean isNew) throws SQLException {
+           boolean isNew*/) throws SQLException {
 
-        super(objectID, objectType, xAxis, yAxis, isNew);
+        super(objectID/*, objectType, xAxis, yAxis, isNew*/);
     }
 }
 
 class Ship extends MapObject {
 
     // get and set methods further down
-    private int containerSum = SQL.getObjectPostInt(this.objectID, SQL.qObjConSum);
     private int cruiseVelocity = 50;
     private int maxVelocity = 100;
     private int currentVelocity = this.maxVelocity;
 
-    Ship(String objectID,
+    Ship(String objectID/*,
          String objectType,
          int isDocked,
          int containerSum,
          int xAxis,
          int yAxis,
-         boolean isNew) throws SQLException {
+         boolean isNew*/) throws SQLException {
 
-        super(objectID, objectType, xAxis, yAxis, isNew);
+        super(objectID/*, objectType, xAxis, yAxis, isNew*/);
 
-        if (isNew) {
+        /*if (isNew) {
             SQL.setObjectColumnInt(SQL.qObjDocked, isDocked, this.objectID); // sets docked status (0 or 1)
             SQL.setObjectColumnInt(SQL.qObjConSum, containerSum, this.objectID); // sets container amount
-        }
+        }*/
     }
 
     public void setContainerAmount(int newValue) { SQL.setObjectColumnInt(SQL.qObjConSum, newValue, this.objectID); }
 
-    public int getContainerAmount() { return this.containerSum; }
+    public int getContainerAmount() { return SQL.getObjectPostInt(this.objectID, SQL.qObjConSum); }
 
     public int getCurrentVelocity() {
         return this.currentVelocity;

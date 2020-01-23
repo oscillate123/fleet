@@ -182,7 +182,7 @@ public class SQL {
     }
 
     public void setObjectColumnInt(String objectColumn, int newValue, String objectID) {
-        String query1 = "update " + this.OBJECTTABLE + " set " + objectColumn + " = " + newValue + "";
+        String query1 = "update " + this.OBJECTTABLE + " set " + objectColumn + " = " + newValue;
         String query2 = " where object_id = '" + objectID + "';";
         String runQuery = query1 + query2;
         setRunSQLQuery(runQuery);

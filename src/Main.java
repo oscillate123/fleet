@@ -17,7 +17,6 @@ public class Main {
         deliverySchedule.add("se_harbor,15");
         deliverySchedule.add("c_harbor,-10");
         deliverySchedule.add("ne_harbor,-5");
-        System.out.println(deliverySchedule);
 
         Scanner entry = new Scanner(System.in);
         System.out.println("Welcome Skipper!");
@@ -27,7 +26,7 @@ public class Main {
         }
         System.out.print("Choose your ship: ");
         String shipName = entry.nextLine().toLowerCase();
-
+        Ship myShip = new Ship(shipName);
         System.out.print("Do you want to go manually [1] or automatically [2]: ");
         int test = entry.nextInt();
         if (test == 1) {
@@ -35,13 +34,13 @@ public class Main {
             while (moving) {
                 cls();
                 newMap.drawMap();
-                moving = newMap.updateCord(shipName);
+                moving = newMap.updateCord(myShip);
             }
         } else if (test == 2) {
             for (String item : deliverySchedule){
                 String dest = item.split(",")[0];
                 int container = Integer.parseInt(item.split(",")[1]);
-                newMap.autoMove(shipName, dest, container, harborCoords);
+                newMap.autoMove(myShip, dest, container, harborCoords);
             }
         }
         // Always close connection before the program ends.

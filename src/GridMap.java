@@ -47,16 +47,16 @@ public class GridMap {
         }
     }
 
-    public void autoMove(String objID, String destination, int container, Map<String, String> harborCoords) throws InterruptedException {
+    public void autoMove(Ship ship, String destination, int container, Map<String, String> harborCoords) throws InterruptedException {
         int destX = this.sqlConnection.getObjectX(destination);
         int destY = this.sqlConnection.getObjectY(destination);
-        int shipX = this.sqlConnection.getObjectX(objID);
-        int shipY = this.sqlConnection.getObjectY(objID);
+        int shipX = this.sqlConnection.getObjectX(ship.objectID);
+        int shipY = this.sqlConnection.getObjectY(ship.objectID);
 
         foundDest:
         while (shipX != destX || shipY != destY) {
-            shipX = this.sqlConnection.getObjectX(objID);
-            shipY = this.sqlConnection.getObjectY(objID);
+            shipX = this.sqlConnection.getObjectX(ship.objectID);
+            shipY = this.sqlConnection.getObjectY(ship.objectID);
             Main.cls();
             if (shipX < destX)
                 shipX++;
@@ -68,7 +68,10 @@ public class GridMap {
                 shipY--;
             while (!this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("empty")){
                 if (this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("harbor") && this.sqlConnection.getObjectIdBasedOnCoordinate(shipX, shipY).equals(destination)) {
-                    System.out.println("Destination reached");
+                    System.out.println("Destination reached, " + container + " containers.");
+                    int oldSum = ship.getContainerAmount();
+                    int sum = oldSum + container;
+                    ship.setContainerAmount(sum);
                     break foundDest;
                 } else {
                     if (shipY == this.size) {
@@ -83,8 +86,8 @@ public class GridMap {
                 }
             }
 
-            this.sqlConnection.setObjectColumnInt("x_axis", shipX, objID);
-            this.sqlConnection.setObjectColumnInt("y_axis", shipY, objID);
+            this.sqlConnection.setObjectColumnInt("x_axis", shipX, ship.objectID);
+            this.sqlConnection.setObjectColumnInt("y_axis", shipY, ship.objectID);
 
             System.out.println("On my way to " + destination);
             this.drawMap();
@@ -92,11 +95,11 @@ public class GridMap {
 
     }
 
-    public boolean updateCord(String objID){
+    public boolean updateCord(Ship myShip){
         boolean returnStatement = true;
         Scanner input = new Scanner(System.in);
-        int x = this.sqlConnection.getObjectX(objID);
-        int y = this.sqlConnection.getObjectY(objID);
+        int x = this.sqlConnection.getObjectX(myShip.objectID);
+        int y = this.sqlConnection.getObjectY(myShip.objectID);
         System.out.println("\nYour current coordinates are: " + x + ", " + y);
         System.out.print("Move ship (N, NW, W, SW, S, SE, E, NE) or write exit to stop: ");
         String answer = input.nextLine().toUpperCase();
@@ -135,8 +138,8 @@ public class GridMap {
                 break;
         }
         if (checkNextSquare(x, y)){
-            this.sqlConnection.setObjectColumnInt("x_axis", x, objID);
-            this.sqlConnection.setObjectColumnInt("y_axis", y, objID);
+            this.sqlConnection.setObjectColumnInt("x_axis", x, myShip.objectID);
+            this.sqlConnection.setObjectColumnInt("y_axis", y, myShip.objectID);
         }
         return returnStatement;
     }
