@@ -26,15 +26,16 @@ public class Main {
         System.out.print("Choose your ship: ");
         String shipID = entry.nextLine().toLowerCase();
 
-        boolean exists = SuppFunc.isStringInArray(sqlConnection.getAllObjectIDs(sqlConnection.qObjType, false), shipID);
-        Ship myShip = new Ship(shipID, exists, sqlConnection);
+        boolean exists = SuppFunc.isStringInArray(sqlConnection.getAllObjectIDs("ship", true), shipID);
+        Ship myShip = new Ship(shipID, !exists, sqlConnection);
 
         System.out.print("Do you want to go manually [1] or automatically [2]: ");
         int test = entry.nextInt();
         if (test == 1) {
             boolean moving = true;
             while (moving) {
-                cls();
+                // cls();
+                SuppFunc.print_string("\n\n\n\n\n\n\n"); // oscar: cls funkar inte på mac & lägg över sånna funktioner till SuppFunc filen
                 newMap.drawMap();
                 moving = newMap.updateCord(myShip);
             }

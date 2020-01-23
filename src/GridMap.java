@@ -57,7 +57,8 @@ public class GridMap {
         foundDest:
         while (shipX != destX || shipY != destY) {
             TimeUnit.MILLISECONDS.sleep(500);
-            Main.cls();
+            // Main.cls();
+            SuppFunc.print_string("\n\n\n\n\n\n\n"); // oscar: cls funkar inte på mac
             shipX = this.sqlConnection.getObjectX(ship.objectID);
             shipY = this.sqlConnection.getObjectY(ship.objectID);
             if (shipX < destX)
