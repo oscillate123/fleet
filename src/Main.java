@@ -25,8 +25,11 @@ public class Main {
             System.out.print(capitalize(ship) + "\n");
         }
         System.out.print("Choose your ship: ");
-        String shipName = entry.nextLine().toLowerCase();
-        Ship myShip = new Ship(shipName);
+        String shipID = entry.nextLine().toLowerCase();
+
+        boolean exists = SuppFunc.isStringInArray(sqlConnection.getAllObjectIDs(sqlConnection.qObjType, false), shipID);
+        Ship myShip = new Ship(shipID, exists, sqlConnection);
+
         System.out.print("Do you want to go manually [1] or automatically [2]: ");
         int test = entry.nextInt();
         if (test == 1) {
@@ -44,6 +47,7 @@ public class Main {
             }
         }
         // Always close connection before the program ends.
+        entry.close();
         sqlConnection.closeSQLConnection();
     }
 
