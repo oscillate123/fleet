@@ -79,7 +79,7 @@ public class GridMap {
                     System.out.println("Destination reached," + loadOrUnload + Math.abs(container) + " containers.");
                     int oldSum = ship.getContainerAmount();
                     int sum = oldSum + container;
-                    ship.setContainerAmount(sum);
+                    ship.setContainerAmount(sum); // updating container sum to the new value of
                     break foundDest;
                 } else {
                     if (shipY == this.size) {

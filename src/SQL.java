@@ -8,8 +8,31 @@ public class SQL {
     // TODO: Extra, create SQL-user and define rights for the user (Security)
     // TODO: Extra, create SQL-connection pool (Java & SQL-server optimization)
 
+    /* LIST OF METHODS IN THIS CLASS
+    *
+    * ### SQL GET DATA SECTION ###
+    * closeSQLConnection             -> closes the sql connection
+    * getAllObjectIDs                -> returns ArrayList with strings
+    * getObjectPostString            -> query builder
+    * getObjectPostInt               -> query builder
+    * getObjectIdBasedOnCoordinate   -> query builder
+    * getObjectTypeBasedOnCoordinate -> query builder
+    * getObjectType                  -> query builder
+    * getObjectX                     -> query builder
+    * getObjectY                     -> query builder
+    *
+    * getRunSQLQuery                 -> returns a value from the database
+    *
+    * ### SQL SET DATA SECTION ###
+    * setRunSQLQuery                 -> inserts a value to the database
+    *
+    * setObjectColumnString          -> query builder
+    * setObjectColumnString          -> query builder
+    * createNewObject                -> creates new post in the database, containing all the properties of the MapObject
+    * */
+
     // Database connection parameters
-    //private final String useSSLFalse  = "?useSSL=false";
+    private final String useSSLFalse  = "?useSSL=false";
     private final String useSSLTrue   = "?useSSL=true";
     private final String DATABASE     = "ships";
     private final String URL          = "jdbc:mysql://flottan.mysql.database.azure.com:3306/" + DATABASE + useSSLTrue;
@@ -20,10 +43,10 @@ public class SQL {
     // tables
     private final String OBJECTTABLE  = "object_state_log";
 
-    // columns for OBJECTTABLE
-    /*public final String qObjID = "object_id";
+    // columns for OBJECTTABLE (used in query-strings)
+    public final String qObjID = "object_id";
     public final String qObjType = "object_type";
-    public final String qObjDocked = "is_docked";*/
+    public final String qObjDocked = "is_docked";
     public final String qObjConSum = "container_sum";
     public final String qXAxis = "x_axis";
     public final String qYAxis = "y_axis";
@@ -69,38 +92,6 @@ public class SQL {
 
         return listOfObjectIDs;
     }
-
-    /*public ArrayList<String> getOneObjectAsArrayList(String findObjectID) {
-        // returns an array list with string array lists, one string array list is the content of one post in SQL DB
-
-        ArrayList<String> resultList = new ArrayList<>();
-        try {
-            PreparedStatement myStatement = this.SQL.prepareStatement(
-                    "select * from object_state_log where object_id = ? ;");
-            myStatement.setString(1, findObjectID);
-
-            ResultSet myResult = myStatement.executeQuery();
-            while (myResult.next()) {
-                String objectID = myResult.getString("object_id");
-                String objectType = myResult.getString("object_type");
-                int isDocked = myResult.getInt("is_docked");
-                int containerSum = myResult.getInt("container_sum");
-                int xAxis = myResult.getInt("x_axis");
-                int yAxis = myResult.getInt("y_axis");
-
-                resultList.add(objectID);
-                resultList.add(objectType);
-                resultList.add(SuppFunc.intToStr(isDocked));
-                resultList.add(SuppFunc.intToStr(containerSum));
-                resultList.add(SuppFunc.intToStr(xAxis));
-                resultList.add(SuppFunc.intToStr(yAxis));
-            }
-
-            myResult.close();
-            myStatement.close();
-        } catch (Exception exc) { exc.printStackTrace(); }
-        return resultList;
-    }*/
 
     private String getObjectPostString(String objectID) {
         String sqlQuery = "select * from " + this.OBJECTTABLE + " where object_id = '" + objectID + "';";
@@ -174,13 +165,13 @@ public class SQL {
         } catch (Exception exc) {exc.printStackTrace();}
     }
 
-    /*public void setObjectColumnString(String objectColumn, String newValue, String objectID) {
+    public void setObjectColumnString(String objectColumn, String newValue, String objectID) {
         // query making, update a certain column which is a string
         String query1 = "update " + this.OBJECTTABLE + " set " + objectColumn + " = '" + newValue + "'";
         String query2 = " where object_id = '" + objectID + "';";
         String runQuery = query1 + query2;
         setRunSQLQuery(runQuery);
-    }*/
+    }
 
     public void setObjectColumnInt(String objectColumn, int newValue, String objectID) {
         // query making, update a certain column which is an int
