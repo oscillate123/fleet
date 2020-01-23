@@ -3,10 +3,12 @@ import java.util.ArrayList;
 
 public class SQL {
 
-    // TODO: If there is time, add SQL-injection checker
-    // TODO: Reusable SQL query methods
+    // TODO: Extra, add SQL-injection checker (Security)
+    // TODO: Extra, Reusable SQL query methods (Java optimization)
+    // TODO: Extra, create SQL-user and define rights for the user (Security)
+    // TODO: Extra, create SQL-connection pool (Java & SQL-server optimization)
 
-    // Database connection
+    // Database connection parameters
     private final String useSSLFalse  = "?useSSL=false";
     private final String useSSLTrue   = "?useSSL=true";
     private final String DATABASE     = "ships";
@@ -88,10 +90,10 @@ public class SQL {
 
                 resultList.add(objectID);
                 resultList.add(objectType);
-                resultList.add(toString(isDocked));
-                resultList.add(toString(containerSum));
-                resultList.add(toString(xAxis));
-                resultList.add(toString(yAxis));
+                resultList.add(SuppFunc.intToStr(isDocked));
+                resultList.add(SuppFunc.intToStr(containerSum));
+                resultList.add(SuppFunc.intToStr(xAxis));
+                resultList.add(SuppFunc.intToStr(yAxis));
             }
 
             myResult.close();
@@ -123,21 +125,28 @@ public class SQL {
         return result;
     }
 
-    public String getObjectBasedOnCoordinate(int x, int y) {
+    public String getObjectIdBasedOnCoordinate(int x, int y) {
         String sqlQuery = "select * from " + this.OBJECTTABLE + " where x_axis = '" + x + "' and y_axis = '" + y + "';";
-        String result = "No return: " + "object_id" + " on " + this.OBJECTTABLE;
+        String result = "empty";
 
         return getRunSQLQuery(sqlQuery, "object_id", result);
     }
 
     public String getObjectTypeBasedOnCoordinate(int x, int y) {
         String sqlQuery = "select * from " + this.OBJECTTABLE + " where x_axis = " + x + " and y_axis = " + y + ";";
-        String result = "No return: " + "object_type" + " on " + this.OBJECTTABLE;
+        String result = "empty";
 
         return getRunSQLQuery(sqlQuery, "object_type", result);
     }
 
+    public String getObjectType(String objectID) { return getObjectPostString(objectID); }
+
+    public int getObjectX(String objectID) { return getObjectPostInt(objectID, this.qXAxis); }
+
+    public int getObjectY(String objectID) { return getObjectPostInt(objectID, this.qYAxis); }
+
     private String getRunSQLQuery(String query, String returnColumn, String result) {
+        // runs SQL queries which will only retrieve data
         try {
             Statement myStatement = this.SQL.createStatement();
             ResultSet myResult = myStatement.executeQuery(query);
@@ -150,16 +159,6 @@ public class SQL {
         return result;
     }
 
-    public String getObjectType(String objectID) { return getObjectPostString(objectID); }
-
-    public int getObjectX(String objectID) { return getObjectPostInt(objectID, this.qXAxis); }
-
-    public int getObjectY(String objectID) { return getObjectPostInt(objectID, this.qYAxis); }
-
-    public String getCoordinateObjectID(int xAxis, int yAxis) { return getObjectBasedOnCoordinate(xAxis, yAxis); }
-
-    private String toString (int num) { return Integer.toString(num); }
-
     /*
      *
      *   THIS IS THE SET SQL DATA SECTION
@@ -167,6 +166,7 @@ public class SQL {
      * */
 
     public void setRunSQLQuery(String query) {
+        // runs SQL queries which will update and/or get SQL-data
         try {
             Connection myConn = DriverManager.getConnection(URL, USERNAME, PASSWORD);
             PreparedStatement prepStatement = myConn.prepareStatement(query);
@@ -175,6 +175,7 @@ public class SQL {
     }
 
     public void setObjectColumnString(String objectColumn, String newValue, String objectID) {
+        // query making, update a certain column which is a string
         String query1 = "update " + this.OBJECTTABLE + " set " + objectColumn + " = '" + newValue + "'";
         String query2 = " where object_id = '" + objectID + "';";
         String runQuery = query1 + query2;
@@ -182,14 +183,15 @@ public class SQL {
     }
 
     public void setObjectColumnInt(String objectColumn, int newValue, String objectID) {
-        String query1 = "update " + this.OBJECTTABLE + " set " + objectColumn + " = " + newValue + "";
+        // query making, update a certain column which is an int
+        String query1 = "update " + this.OBJECTTABLE + " set " + objectColumn + " = " + newValue;
         String query2 = " where object_id = '" + objectID + "';";
         String runQuery = query1 + query2;
         setRunSQLQuery(runQuery);
     }
 
-    public void createNewObject(String objectID, String objectType, int isDocked, int containerSum,
-                                           int xAxis, int yAxis) {
+    public void createNewObject(String objectID, String objectType, int isDocked, int containerSum, int xAxis, int yAxis) {
+        // query making, creates a new post in a SQL-table
         String insert = "insert into object_state_log ";
         String columns = "(object_id, object_type, is_docked, container_sum, x_axis, y_axis)";
         String values = "values ('" + objectID + "', '" + objectType + "', " + isDocked + ", " + containerSum;
