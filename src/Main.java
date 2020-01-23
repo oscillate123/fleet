@@ -4,6 +4,11 @@ import java.sql.*;
 
 public class Main {
     public static void main(String[] args) throws SQLException, InterruptedException, IOException {
+
+        SuppFunc.main();
+
+        System.exit(0);
+
         int gameMapSize = 25; //Här ändras storleken på kartan
 
         SQL sqlConnection = new SQL();
