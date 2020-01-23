@@ -47,14 +47,14 @@ public class GridMap {
         }
     }
 
-    public void autoMove(String objID, String destination, Map<String, String> harborCoords) throws InterruptedException {
+    public void autoMove(String objID, String destination, int container, Map<String, String> harborCoords) throws InterruptedException {
         Map<String, String> boatCoords = Main.getCoordMap("ship", this.sqlConnection);
         int destX = this.sqlConnection.getObjectX(destination);
         int destY = this.sqlConnection.getObjectY(destination);
         int shipX = this.sqlConnection.getObjectX(objID);
         int shipY = this.sqlConnection.getObjectY(objID);
 
-
+        foundDest:
         while (shipX != destX || shipY != destY) {
             shipX = this.sqlConnection.getObjectX(objID);
             shipY = this.sqlConnection.getObjectY(objID);
@@ -68,26 +68,39 @@ public class GridMap {
                 shipY++;
             else if (shipY > destY)
                 shipY--;
-            System.out.println("I want to go to x=" + shipX + " y=" + shipY);
-            if (checkNextSquare(shipX, shipY)){
-                this.sqlConnection.setObjectColumnInt("x_axis", shipX, objID);
-                this.sqlConnection.setObjectColumnInt("y_axis", shipY, objID);
-            } else {
-                // Flyttar sig i x-led om en båt är i vägen
-                // Flyttar sig dock också när en hamn är i vägen:/
-                shipX++;
+            while (!this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("empty")){
+                if (this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("harbor") && this.sqlConnection.getObjectIdBasedOnCoordinate(shipX, shipY).equals(destination)) {
+                    System.out.println("Destination reached");
+                    break foundDest;
+                } else {
+                    if (shipY == this.size) {
+                        shipY--;
+                    } else if (shipY == 1) {
+                        shipY++;
+                    } else if (shipX == this.size) {
+                        shipX--;
+                    } else {
+                        shipX++;
+                    }
+                }
             }
+
+            this.sqlConnection.setObjectColumnInt("x_axis", shipX, objID);
+            this.sqlConnection.setObjectColumnInt("y_axis", shipY, objID);
+
+            System.out.println("On my way to " + destination);
             this.drawMap();
         }
 
     }
 
-    public void updateCord(String objID){
+    public boolean updateCord(String objID){
+        boolean returnStatement = true;
         Scanner input = new Scanner(System.in);
         int x = this.sqlConnection.getObjectX(objID);
         int y = this.sqlConnection.getObjectY(objID);
         System.out.println("\nYour current coordinates are: " + x + ", " + y);
-        System.out.print("Move ship (N, NW, W, SW, S, SE, E, NE): ");
+        System.out.print("Move ship (N, NW, W, SW, S, SE, E, NE) or write exit to stop: ");
         String answer = input.nextLine().toUpperCase();
 
         switch (answer){
@@ -119,11 +132,15 @@ public class GridMap {
                 y++;
                 x--;
                 break;
+            case "EXIT":
+                returnStatement = false;
+                break;
         }
         if (checkNextSquare(x, y)){
             this.sqlConnection.setObjectColumnInt("x_axis", x, objID);
             this.sqlConnection.setObjectColumnInt("y_axis", y, objID);
         }
+        return returnStatement;
     }
 
 
@@ -132,7 +149,7 @@ public class GridMap {
         boolean allowMovement = true;
         if (objectInNextSquare.equals("ship")) {
             allowMovement = false;
-            String shipInWay = Main.capitalize(this.sqlConnection.getObjectBasedOnCoordinate(newX, newY));
+            String shipInWay = Main.capitalize(this.sqlConnection.getObjectIdBasedOnCoordinate(newX, newY));
             System.out.println(shipInWay + " is in the way");
         } else if (objectInNextSquare.equals("harbor")){
             allowMovement = false;

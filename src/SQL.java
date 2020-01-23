@@ -123,16 +123,16 @@ public class SQL {
         return result;
     }
 
-    public String getObjectBasedOnCoordinate(int x, int y) {
+    public String getObjectIdBasedOnCoordinate(int x, int y) {
         String sqlQuery = "select * from " + this.OBJECTTABLE + " where x_axis = '" + x + "' and y_axis = '" + y + "';";
-        String result = "No return: " + "object_id" + " on " + this.OBJECTTABLE;
+        String result = "empty";
 
         return getRunSQLQuery(sqlQuery, "object_id", result);
     }
 
     public String getObjectTypeBasedOnCoordinate(int x, int y) {
         String sqlQuery = "select * from " + this.OBJECTTABLE + " where x_axis = " + x + " and y_axis = " + y + ";";
-        String result = "No return: " + "object_type" + " on " + this.OBJECTTABLE;
+        String result = "empty";
 
         return getRunSQLQuery(sqlQuery, "object_type", result);
     }
@@ -156,7 +156,7 @@ public class SQL {
 
     public int getObjectY(String objectID) { return getObjectPostInt(objectID, this.qYAxis); }
 
-    public String getCoordinateObjectID(int xAxis, int yAxis) { return getObjectBasedOnCoordinate(xAxis, yAxis); }
+    public String getCoordinateObjectID(int xAxis, int yAxis) { return getObjectIdBasedOnCoordinate(xAxis, yAxis); }
 
     private String toString (int num) { return Integer.toString(num); }
 

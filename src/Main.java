@@ -4,20 +4,26 @@ import java.sql.*;
 
 public class Main {
     public static void main(String[] args) throws SQLException, InterruptedException {
-        //print_string("  -- Hello ladies and gentlemen this is your Main Method speaking. We are now flying --  ");
-        //System.out.println("testing");
-        //SQL.getDatabases();
+        int gameMapSize = 25; //Här ändras storleken på kartan
+
         SQL sqlConnection = new SQL();
-        GridMap newMap = new GridMap(25, sqlConnection);
+        GridMap newMap = new GridMap(gameMapSize, sqlConnection);
 
         Map<String, String> boatCoords = getCoordMap("ship", sqlConnection);
         Map<String, String> harborCoords = getCoordMap("harbor", sqlConnection);
+        ArrayList<String> deliverySchedule = new ArrayList<String>();
+        deliverySchedule.add("nw_harbor,10");
+        deliverySchedule.add("sw_harbor,-5");
+        deliverySchedule.add("se_harbor,15");
+        deliverySchedule.add("c_harbor,-10");
+        deliverySchedule.add("ne_harbor,-5");
+        System.out.println(deliverySchedule);
 
         Scanner entry = new Scanner(System.in);
         System.out.println("Welcome Skipper!");
         System.out.println("These ships at your disposal: ");
         for (String ship : boatCoords.keySet()) {
-            System.out.print(ship + "\n");
+            System.out.print(capitalize(ship) + "\n");
         }
         System.out.print("Choose your ship: ");
         String shipName = entry.nextLine().toLowerCase();
@@ -29,14 +35,15 @@ public class Main {
             while (moving) {
                 cls();
                 newMap.drawMap();
-                newMap.updateCord(shipName);
+                moving = newMap.updateCord(shipName);
             }
         } else if (test == 2) {
-            System.out.print("Where do you want to go? Enter destination Harbor: ");
-            String destination = "sw_harbor";
-            newMap.autoMove(shipName, destination, harborCoords);
+            for (String item : deliverySchedule){
+                String dest = item.split(",")[0];
+                int container = Integer.parseInt(item.split(",")[1]);
+                newMap.autoMove(shipName, dest, container, harborCoords);
+            }
         }
-
         // Always close connection before the program ends.
         sqlConnection.closeSQLConnection();
     }
