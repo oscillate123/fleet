@@ -108,8 +108,6 @@ public class GridMap {
         Scanner input = new Scanner(System.in);
         int shipX = this.sqlConnection.getObjectX(myShip.objectID);
         int shipY = this.sqlConnection.getObjectY(myShip.objectID);
-        /*int destX = this.sqlConnection.getObjectX(destination);
-        int destY = this.sqlConnection.getObjectY(destination);*/
 
         this.drawMap();
         System.out.println("\nYour current coordinates are: " + shipX + ", " + shipY);
@@ -150,29 +148,51 @@ public class GridMap {
                 break;
             default:
                 break;
+        }
+        if(this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("ship") && returnStatement){
+            String shipInWay = SuppFunc.capitalize(this.sqlConnection.getObjectIdBasedOnCoordinate(shipX, shipY));
+            System.out.println(shipInWay + " is in the way\n");
+        } else if(this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("harbor")){
+            String harbor = this.sqlConnection.getObjectIdBasedOnCoordinate(shipX, shipY);
+            System.out.print("You have reached a harbor, do you wish to load [1], unload [2] or leave [3]? Enter a number: ");
+            int loadOrUnload = input.nextInt();
+            switch (loadOrUnload) {
+                case 1:
+                    System.out.print("How many containers would you like to load on your ship? Enter a number: ");
+                    int loadAmount = input.nextInt();
+
+                    int shipCont = myShip.getContainerAmount();
+                    int newShipCont = shipCont + loadAmount;
+                    int harbCont = this.sqlConnection.getObjectPostInt(harbor, "container_sum");
+                    int newHarbCont = harbCont - loadAmount;
+
+                    myShip.setContainerAmount(newShipCont);
+                    this.sqlConnection.setObjectColumnInt("container_sum", newHarbCont, harbor);
+                    System.out.println("Loaded " + loadAmount + " containers onto " + myShip.objectID + " from the harbor.");
+                    break;
+                case 2:
+                    System.out.print("How many containers would you like to unload into the harbor? Enter a number: ");
+                    int unloadAmount = input.nextInt();
+
+                    int shipCont2 = myShip.getContainerAmount();
+                    int newShipCont2 = shipCont2 - unloadAmount;
+                    int harbCont2 = this.sqlConnection.getObjectPostInt(harbor, "container_sum");
+                    int newHarbCont2 = harbCont2 + unloadAmount;
+
+                    myShip.setContainerAmount(newShipCont2);
+                    this.sqlConnection.setObjectColumnInt("container_sum", newHarbCont2, harbor);
+                    System.out.println("Unloaded " + unloadAmount + " containers from " + myShip.objectID + " into the harbor.");
+                    break;
+                case 3:
+                    break;
             }
-            if(this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("ship")){
-                String shipInWay = SuppFunc.capitalize(this.sqlConnection.getObjectIdBasedOnCoordinate(shipX, shipY));
-                System.out.println(shipInWay + " is in the way\n");
-            }
-            /*else if (this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("harbor") && this.sqlConnection.getObjectIdBasedOnCoordinate(shipX, shipY).equals(destination)){
-                System.out.println("Destination reached!");
-                *//*int oldSum = myShip.getContainerAmount();
-                int sum = oldSum + container;
-                myShip.setContainerAmount(sum);*//*
-                returnStatement = false;
-            }
-            else if(this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("harbor")){
-                System.out.println("Wrong harbor!\n");
-            }*/
-            else if(shipX > this.size || shipX < 1 || shipY > this.size || shipY < 1){
-                System.out.println("You cant leave the map!");
-            }
-            else{
-                this.sqlConnection.setObjectColumnInt("x_axis", shipX, myShip.objectID);
-                this.sqlConnection.setObjectColumnInt("y_axis", shipY, myShip.objectID);
-            }
-        TimeUnit.MILLISECONDS.sleep(500);
+        } else if(shipX > this.size || shipX < 1 || shipY > this.size || shipY < 1){
+            System.out.println("You cant leave the map!");
+        } else{
+            this.sqlConnection.setObjectColumnInt("x_axis", shipX, myShip.objectID);
+            this.sqlConnection.setObjectColumnInt("y_axis", shipY, myShip.objectID);
+        }
+        TimeUnit.MILLISECONDS.sleep(1500);
         return returnStatement;
     }
 }
