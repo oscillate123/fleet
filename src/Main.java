@@ -21,7 +21,7 @@ public class Main {
         System.out.println("Welcome Skipper!");
         System.out.println("These ships at your disposal: ");
         for (String ship : boatCoords.keySet()) {
-            System.out.print(capitalize(ship) + "\n");
+            System.out.print(SuppFunc.capitalize(ship) + "\n");
         }
         System.out.print("Choose your ship: ");
         String shipID = entry.nextLine().toLowerCase();
@@ -34,7 +34,7 @@ public class Main {
         if (test == 1) {
             boolean moving = true;
             while (moving) {
-                // cls();
+                // SuppFunc.cls();
                 SuppFunc.print_string("\n\n\n\n\n\n\n"); // oscar: cls funkar inte på mac & lägg över sånna funktioner till SuppFunc filen
                 newMap.drawMap();
                 moving = newMap.updateCord(myShip);
@@ -61,18 +61,5 @@ public class Main {
             coordMap.put(objID, coordString);
         }
         return coordMap;
-    }
-    /*public static void print_string(String text) { System.out.println(text); }
-    public static void print_int(int x) { System.out.println(x); }
-    public static int strToInt(String str) { return Integer.parseInt(str); }*/
-
-
-    public static void cls() throws IOException, InterruptedException {
-        new ProcessBuilder("cmd","/c","cls").inheritIO().start().waitFor();
-        System.out.println("\n\n\n");
-    }
-
-    public static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }

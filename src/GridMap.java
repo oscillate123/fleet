@@ -44,7 +44,7 @@ public class GridMap {
         }
         System.out.print("H = Harbor, D = Dock \nBoats: ");
         for(String boat : boatCoords.keySet()){
-            System.out.print(Main.capitalize(boat).charAt(0) + " = " + Main.capitalize(boat) + ", ");
+            System.out.print(SuppFunc.capitalize(boat).charAt(0) + " = " + SuppFunc.capitalize(boat) + ", ");
         }
     }
 
@@ -57,7 +57,7 @@ public class GridMap {
         foundDest:
         while (shipX != destX || shipY != destY) {
             TimeUnit.MILLISECONDS.sleep(500);
-            // Main.cls();
+            // SuppFunc.cls();
             SuppFunc.print_string("\n\n\n\n\n\n\n"); // oscar: cls funkar inte på mac
             shipX = this.sqlConnection.getObjectX(ship.objectID);
             shipY = this.sqlConnection.getObjectY(ship.objectID);
@@ -153,7 +153,7 @@ public class GridMap {
         boolean allowMovement = true;
         if (objectInNextSquare.equals("ship")) {
             allowMovement = false;
-            String shipInWay = Main.capitalize(this.sqlConnection.getObjectIdBasedOnCoordinate(newX, newY));
+            String shipInWay = SuppFunc.capitalize(this.sqlConnection.getObjectIdBasedOnCoordinate(newX, newY));
             System.out.println(shipInWay + " is in the way");
         } else if (objectInNextSquare.equals("harbor")){
             allowMovement = false;
