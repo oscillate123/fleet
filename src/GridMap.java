@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -47,7 +48,7 @@ public class GridMap {
         }
     }
 
-    public void autoMove(Ship ship, String destination, int container, Map<String, String> harborCoords) throws InterruptedException {
+    public void autoMove(Ship ship, String destination, int container) throws InterruptedException, IOException {
         int destX = this.sqlConnection.getObjectX(destination);
         int destY = this.sqlConnection.getObjectY(destination);
         int shipX = this.sqlConnection.getObjectX(ship.objectID);
@@ -55,9 +56,10 @@ public class GridMap {
 
         foundDest:
         while (shipX != destX || shipY != destY) {
+            TimeUnit.MILLISECONDS.sleep(500);
+            Main.cls();
             shipX = this.sqlConnection.getObjectX(ship.objectID);
             shipY = this.sqlConnection.getObjectY(ship.objectID);
-            Main.cls();
             if (shipX < destX)
                 shipX++;
             else if (shipX > destX)
