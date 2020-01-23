@@ -8,16 +8,6 @@ public class SuppFunc {
     // Here we have supportive functions, to make easy things more effective and use less code.
     // We don't want to repeat ourselves (DRY)
 
-    // testing methods
-    public static void main() throws SQLException {
-
-        SQL sql = new SQL();
-        Ship ship = new Ship("vasa", false, sql);
-
-        ArrayList<String> kek = getQueueFromUser(sql, ship);
-        print_string(kek.toString());
-    }
-
     // Static class properties
     private static Scanner scan = new Scanner(System.in);
 
@@ -73,13 +63,13 @@ public class SuppFunc {
         int maxUnload = ship.getContainerAmount();
         int unOrLoadAmount = 0;
 
-        while (deliverySchedule.size() > 0 & !continueLoop & maxUnload > unOrLoadAmount-11) {
+        while (!continueLoop & maxUnload > unOrLoadAmount-11) {
             print_string("Available destinations: ");
             for (String item : harbors) { print_string(item); }
             print_string("");
 
             String harborResult = "";
-            while (isStringInArray(harbors, harborResult) & harborResult.equals("exit")) {
+            while (isStringInArray(harbors, harborResult)) {
                 harborResult = getStringInput("Which harbor do you want to go to?");
                 if (harborResult.equals("exit")) {
                     return new ArrayList<String>(Arrays.asList("exit"));

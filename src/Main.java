@@ -5,7 +5,11 @@ import java.sql.*;
 public class Main {
     public static void main(String[] args) throws SQLException, InterruptedException, IOException {
 
-        SuppFunc.main();
+        SQL sql = new SQL();
+        Ship ship1 = new Ship("vasa", false, sql);
+
+        ArrayList<String> kek = SuppFunc.getQueueFromUser(sql, ship1);
+        SuppFunc.print_string(kek.toString());
 
         System.exit(0);
 
