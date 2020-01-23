@@ -32,16 +32,10 @@ public class Main {
         System.out.print("Do you want to go manually [1] or automatically [2]: ");
         int test = entry.nextInt();
         if (test == 1) {
-            String dest = "";
-            for (String item : deliverySchedule){
-                dest = item.split(",")[0];
-                int container = Integer.parseInt(item.split(",")[1]);
-                newMap.updateCord(myShip, dest, container);
             boolean moving = true;
             while (moving) {
-                // SuppFunc.cls();
-                SuppFunc.print_string("\n\n\n\n\n\n\n"); // oscar: cls funkar inte på mac & lägg över sånna funktioner till SuppFunc filen
-                newMap.drawMap();
+                SuppFunc.cls();
+                //SuppFunc.print_string("\n\n\n\n\n\n\n"); // oscar: cls funkar inte på mac & lägg över sånna funktioner till SuppFunc filen
                 moving = newMap.updateCord(myShip);
             }
         } else if (test == 2) {

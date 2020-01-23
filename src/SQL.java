@@ -9,7 +9,7 @@ public class SQL {
     // TODO: Extra, create SQL-connection pool (Java & SQL-server optimization)
 
     // Database connection parameters
-    private final String useSSLFalse  = "?useSSL=false";
+    //private final String useSSLFalse  = "?useSSL=false";
     private final String useSSLTrue   = "?useSSL=true";
     private final String DATABASE     = "ships";
     private final String URL          = "jdbc:mysql://flottan.mysql.database.azure.com:3306/" + DATABASE + useSSLTrue;
@@ -21,9 +21,9 @@ public class SQL {
     private final String OBJECTTABLE  = "object_state_log";
 
     // columns for OBJECTTABLE
-    public final String qObjID = "object_id";
+    /*public final String qObjID = "object_id";
     public final String qObjType = "object_type";
-    public final String qObjDocked = "is_docked";
+    public final String qObjDocked = "is_docked";*/
     public final String qObjConSum = "container_sum";
     public final String qXAxis = "x_axis";
     public final String qYAxis = "y_axis";
@@ -31,7 +31,7 @@ public class SQL {
     // constructor
 
     SQL() throws SQLException {
-        this.SQL = DriverManager.getConnection(URL, USERNAME, PASSWORD);;
+        this.SQL = DriverManager.getConnection(URL, USERNAME, PASSWORD);
     }
 
     // getters
@@ -70,7 +70,7 @@ public class SQL {
         return listOfObjectIDs;
     }
 
-    public ArrayList<String> getOneObjectAsArrayList(String findObjectID) {
+    /*public ArrayList<String> getOneObjectAsArrayList(String findObjectID) {
         // returns an array list with string array lists, one string array list is the content of one post in SQL DB
 
         ArrayList<String> resultList = new ArrayList<>();
@@ -100,7 +100,7 @@ public class SQL {
             myStatement.close();
         } catch (Exception exc) { exc.printStackTrace(); }
         return resultList;
-    }
+    }*/
 
     private String getObjectPostString(String objectID) {
         String sqlQuery = "select * from " + this.OBJECTTABLE + " where object_id = '" + objectID + "';";
@@ -174,13 +174,13 @@ public class SQL {
         } catch (Exception exc) {exc.printStackTrace();}
     }
 
-    public void setObjectColumnString(String objectColumn, String newValue, String objectID) {
+    /*public void setObjectColumnString(String objectColumn, String newValue, String objectID) {
         // query making, update a certain column which is a string
         String query1 = "update " + this.OBJECTTABLE + " set " + objectColumn + " = '" + newValue + "'";
         String query2 = " where object_id = '" + objectID + "';";
         String runQuery = query1 + query2;
         setRunSQLQuery(runQuery);
-    }
+    }*/
 
     public void setObjectColumnInt(String objectColumn, int newValue, String objectID) {
         // query making, update a certain column which is an int

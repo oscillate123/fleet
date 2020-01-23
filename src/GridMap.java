@@ -57,8 +57,8 @@ public class GridMap {
         foundDest:
         while (shipX != destX || shipY != destY) {
             TimeUnit.MILLISECONDS.sleep(500);
-            // SuppFunc.cls();
-            SuppFunc.print_string("\n\n\n\n\n\n\n"); // oscar: cls funkar inte på mac
+            SuppFunc.cls();
+            //SuppFunc.print_string("\n\n\n\n\n\n\n"); // oscar: cls funkar inte på mac
             shipX = this.sqlConnection.getObjectX(ship.objectID);
             shipY = this.sqlConnection.getObjectY(ship.objectID);
             if (shipX < destX)
@@ -71,7 +71,12 @@ public class GridMap {
                 shipY--;
             while (!this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("empty")){
                 if (this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("harbor") && this.sqlConnection.getObjectIdBasedOnCoordinate(shipX, shipY).equals(destination)) {
-                    System.out.println("Destination reached, " + container + " containers.");
+                    String loadOrUnload;
+                    if (container < 0)
+                        loadOrUnload = " unloading ";
+                    else
+                        loadOrUnload = " loading ";
+                    System.out.println("Destination reached," + loadOrUnload + Math.abs(container) + " containers.");
                     int oldSum = ship.getContainerAmount();
                     int sum = oldSum + container;
                     ship.setContainerAmount(sum);
@@ -98,69 +103,68 @@ public class GridMap {
 
     }
 
-    public void updateCord(Ship myShip, String destination, int container){
+    public boolean updateCord(Ship myShip) throws InterruptedException {
         boolean returnStatement = true;
         Scanner input = new Scanner(System.in);
         int shipX = this.sqlConnection.getObjectX(myShip.objectID);
         int shipY = this.sqlConnection.getObjectY(myShip.objectID);
-        int destX = this.sqlConnection.getObjectX(destination);
-        int destY = this.sqlConnection.getObjectY(destination);
+        /*int destX = this.sqlConnection.getObjectX(destination);
+        int destY = this.sqlConnection.getObjectY(destination);*/
 
-        while(shipX != destX || shipY != destY ){
-            this.drawMap();
-            shipX = this.sqlConnection.getObjectX(myShip.objectID);
-            shipY = this.sqlConnection.getObjectY(myShip.objectID);
-            System.out.println("\nOn my way to " + destination);
-            System.out.println("\nYour current coordinates are: " + shipX + ", " + shipY);
-            System.out.print("Move ship (N, NW, W, SW, S, SE, E, NE) or write exit to stop: ");
-            String answer = input.nextLine().toUpperCase();
+        this.drawMap();
+        System.out.println("\nYour current coordinates are: " + shipX + ", " + shipY);
+        System.out.print("Move ship (N, NW, W, SW, S, SE, E, NE) or write exit to stop: ");
+        String answer = input.nextLine().toUpperCase();
 
-            switch (answer) {
-                case "N":
-                    shipY--;
-                    break;
-                case "E":
-                    shipX++;
-                    break;
-                case "S":
-                    shipY++;
-                    break;
-                case "W":
-                    shipX--;
-                    break;
-                case "NW":
-                    shipY--;
-                    shipX--;
-                    break;
-                case "NE":
-                    shipY--;
-                    shipX++;
-                    break;
-                case "SE":
-                    shipY++;
-                    shipX++;
-                    break;
-                case "SW":
-                    shipY++;
-                    shipX--;
-                    break;
-                default:
-                    break;
-            }
-            if(this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("ship")){
-                String shipInWay = Main.capitalize(this.sqlConnection.getObjectIdBasedOnCoordinate(shipX, shipY));
-                System.out.println(shipInWay + " is in the way\n");
-            }
-            else if (this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("harbor") && this.sqlConnection.getObjectIdBasedOnCoordinate(shipX, shipY).equals(destination)){
-                System.out.println("Destination reached, " + container + " containers.");
-                int oldSum = myShip.getContainerAmount();
-                int sum = oldSum + container;
-                myShip.setContainerAmount(sum);
+        switch (answer) {
+            case "N":
+                shipY--;
+                break;
+            case "E":
+                shipX++;
+                break;
+            case "S":
+                shipY++;
+                break;
+            case "W":
+                shipX--;
+                break;
+            case "NW":
+                shipY--;
+                shipX--;
+                break;
+            case "NE":
+                shipY--;
+                shipX++;
+                break;
+            case "SE":
+                shipY++;
+                shipX++;
+                break;
+            case "SW":
+                shipY++;
+                shipX--;
+                break;
+            case "EXIT":
+                returnStatement = false;
+                break;
+            default:
                 break;
             }
-            else if(this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("harbor")){
-                System.out.println("Wrong harbour!\n");
+            if(this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("ship")){
+                String shipInWay = SuppFunc.capitalize(this.sqlConnection.getObjectIdBasedOnCoordinate(shipX, shipY));
+                System.out.println(shipInWay + " is in the way\n");
             }
+            /*else if (this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("harbor") && this.sqlConnection.getObjectIdBasedOnCoordinate(shipX, shipY).equals(destination)){
+                System.out.println("Destination reached!");
+                *//*int oldSum = myShip.getContainerAmount();
+                int sum = oldSum + container;
+                myShip.setContainerAmount(sum);*//*
+                returnStatement = false;
+            }
+            else if(this.sqlConnection.getObjectTypeBasedOnCoordinate(shipX, shipY).equals("harbor")){
+                System.out.println("Wrong harbor!\n");
+            }*/
             else if(shipX > this.size || shipX < 1 || shipY > this.size || shipY < 1){
                 System.out.println("You cant leave the map!");
             }
@@ -168,24 +172,7 @@ public class GridMap {
                 this.sqlConnection.setObjectColumnInt("x_axis", shipX, myShip.objectID);
                 this.sqlConnection.setObjectColumnInt("y_axis", shipY, myShip.objectID);
             }
-        }
-    }
-
-
-    public boolean checkNextSquare(int newX, int newY) {
-        String objectInNextSquare = this.sqlConnection.getObjectTypeBasedOnCoordinate(newX, newY);
-        boolean allowMovement = true;
-        if (objectInNextSquare.equals("ship")) {
-            allowMovement = false;
-            String shipInWay = SuppFunc.capitalize(this.sqlConnection.getObjectIdBasedOnCoordinate(newX, newY));
-            System.out.println(shipInWay + " is in the way");
-        } else if (objectInNextSquare.equals("harbor")){
-            allowMovement = false;
-            System.out.println("There is a " + objectInNextSquare + " in the way.");
-        } else if (newX > this.size || newX < 1 || newY > this.size || newY < 1) {
-            allowMovement = false;
-            System.out.println("You can't leave the map");
-        }
-        return  allowMovement;
+        TimeUnit.MILLISECONDS.sleep(500);
+        return returnStatement;
     }
 }
