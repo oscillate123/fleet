@@ -48,7 +48,6 @@ public class GridMap {
     }
 
     public void autoMove(String objID, String destination, int container, Map<String, String> harborCoords) throws InterruptedException {
-        Map<String, String> boatCoords = Main.getCoordMap("ship", this.sqlConnection);
         int destX = this.sqlConnection.getObjectX(destination);
         int destY = this.sqlConnection.getObjectY(destination);
         int shipX = this.sqlConnection.getObjectX(objID);
@@ -59,7 +58,6 @@ public class GridMap {
             shipX = this.sqlConnection.getObjectX(objID);
             shipY = this.sqlConnection.getObjectY(objID);
             Main.cls();
-            boatCoords = Main.getCoordMap("ship", this.sqlConnection);
             if (shipX < destX)
                 shipX++;
             else if (shipX > destX)
