@@ -13,11 +13,6 @@ public class SuppFunc {
     // testing methods
     public static void main() throws SQLException {
 
-        SQL sql = new SQL();
-        Ship ship = new Ship("vasa", false);
-
-        ArrayList<String> kek = getQueueFromUser();
-        print_string(kek.toString());
     }
 
     // Static class properties
