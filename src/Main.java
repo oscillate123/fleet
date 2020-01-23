@@ -21,13 +21,13 @@ public class Main {
         System.out.println("Welcome Skipper!");
         System.out.println("These ships at your disposal: ");
         for (String ship : boatCoords.keySet()) {
-            System.out.print(capitalize(ship) + "\n");
+            System.out.print(SuppFunc.capitalize(ship) + "\n");
         }
         System.out.print("Choose your ship: ");
         String shipID = entry.nextLine().toLowerCase();
 
-        boolean exists = SuppFunc.isStringInArray(sqlConnection.getAllObjectIDs(sqlConnection.qObjType, false), shipID);
-        Ship myShip = new Ship(shipID, exists, sqlConnection);
+        boolean exists = SuppFunc.isStringInArray(sqlConnection.getAllObjectIDs("ship", true), shipID);
+        Ship myShip = new Ship(shipID, !exists, sqlConnection);
 
         System.out.print("Do you want to go manually [1] or automatically [2]: ");
         int test = entry.nextInt();
@@ -37,6 +37,12 @@ public class Main {
                 dest = item.split(",")[0];
                 int container = Integer.parseInt(item.split(",")[1]);
                 newMap.updateCord(myShip, dest, container);
+            boolean moving = true;
+            while (moving) {
+                // SuppFunc.cls();
+                SuppFunc.print_string("\n\n\n\n\n\n\n"); // oscar: cls funkar inte på mac & lägg över sånna funktioner till SuppFunc filen
+                newMap.drawMap();
+                moving = newMap.updateCord(myShip);
             }
         } else if (test == 2) {
             for (String item : deliverySchedule){
@@ -60,18 +66,5 @@ public class Main {
             coordMap.put(objID, coordString);
         }
         return coordMap;
-    }
-    /*public static void print_string(String text) { System.out.println(text); }
-    public static void print_int(int x) { System.out.println(x); }
-    public static int strToInt(String str) { return Integer.parseInt(str); }*/
-
-
-    public static void cls() throws IOException, InterruptedException {
-        new ProcessBuilder("cmd","/c","cls").inheritIO().start().waitFor();
-        System.out.println("\n\n\n");
-    }
-
-    public static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 }
