@@ -1,6 +1,4 @@
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.security.Key;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -14,9 +12,9 @@ public class SuppFunc {
     public static void main() throws SQLException {
 
         SQL sql = new SQL();
-        Ship ship = new Ship("vasa", false);
+        Ship ship = new Ship("vasa", false, sql);
 
-        ArrayList<String> kek = getQueueFromUser();
+        ArrayList<String> kek = getQueueFromUser(sql, ship);
         print_string(kek.toString());
     }
 
@@ -41,6 +39,11 @@ public class SuppFunc {
         print_string(text);
         return scan.nextInt();
     }
+    public static boolean getBooleanInput (String text) {
+        print_string(text);
+        String input = scan.nextLine();
+        return input.equals("yes");
+    }
 
     // lookup methods
     public static boolean isStringInArray (ArrayList<String> inList, String str) {
@@ -61,12 +64,16 @@ public class SuppFunc {
         System.out.println("\n\n\n");
     }
 
+    // general support methods
     public static ArrayList<String> getQueueFromUser(SQL sqlConnection, Ship ship) {
 
         ArrayList<String> harbors = sqlConnection.getAllObjectIDs("harbor", true);
         ArrayList<String> deliverySchedule = new ArrayList<>();
+        boolean continueLoop = false;
+        int maxUnload = ship.getContainerAmount();
+        int unOrLoadAmount = 0;
 
-        while (deliverySchedule.size() > 0) {
+        while (deliverySchedule.size() > 0 & !continueLoop & maxUnload > unOrLoadAmount-11) {
             print_string("Available destinations: ");
             for (String item : harbors) { print_string(item); }
             print_string("");
@@ -82,6 +89,7 @@ public class SuppFunc {
             boolean isNotBigger = true;
             int max = 11;
             int containerAmount = 1000000000; // TODO: Make this part of the code more efficient
+
             while (containerAmount > max & isNotBigger) {
                 try {
                     String message1 = "\nUsage: '10' for getting 10 containers, and '-10' for dropping 10 containers.";
@@ -89,31 +97,27 @@ public class SuppFunc {
                     String message2 = "\nHow many containers do you want to drop or pickup at " + harborResult + " ?";
                     containerAmount = getIntInput(message1 + message3 + message2);
 
-                    int newHarborContainerSum = sqlConnection.getObjectPostInt(harborResult, sqlConnection.qObjConSum) + containerAmount;
+                    int harborContainerSum = sqlConnection.getObjectPostInt(harborResult, sqlConnection.qObjConSum);
+                    int newHarborContainerSum = harborContainerSum + containerAmount;
+                    int newShipContainerSum = ship.getContainerAmount() + containerAmount;
 
                     isNotBigger = compareVal(0, newHarborContainerSum);
+                    isNotBigger = compareVal(0, newShipContainerSum);
 
+                    if (!isNotBigger) {
+                        print_string("You can not un/load " + containerAmount + " containers.");
+                        print_string("The harbor has " + harborContainerSum + " containers and the ship has " + ship.getContainerAmount() + ".");
+                    } else if (containerAmount > max) {
+                        print_string("You can only un/load " + max + " containers at once.");
+                    }
                 } catch (Exception e) {
                     print_string("Incorrect input.");
                 }
             }
-
-
-
-            deliverySchedule.add(harborResult + intToStr(containerAmount));
+            unOrLoadAmount = unOrLoadAmount + containerAmount;
+            deliverySchedule.add(harborResult + "," + intToStr(containerAmount)); // adding ship info as a
+            continueLoop = getBooleanInput("Do you want to continue? Type 'yes' to continue");
         }
-
-        /*
-        deliverySchedule.add(getStringInput(""));
-
-
-        deliverySchedule.add("nw_harbor,10");
-        deliverySchedule.add("sw_harbor,-5");
-        deliverySchedule.add("se_harbor,15");
-        deliverySchedule.add("c_harbor,-10");
-        deliverySchedule.add("ne_harbor,-5");
-         */
-
         return deliverySchedule;
     }
 
