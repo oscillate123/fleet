@@ -44,8 +44,8 @@ public class Main {
         if (test == 1) {
             boolean moving = true;
             while (moving) {
-                SuppFunc.cls();
-                //SuppFunc.print_string("\n\n\n\n\n\n\n"); // oscar: cls funkar inte på mac & lägg över sånna funktioner till SuppFunc filen
+                // SuppFunc.cls();
+                SuppFunc.print_string("\n\n\n\n\n\n\n"); // oscar: cls funkar inte på mac & lägg över sånna funktioner till SuppFunc filen
                 moving = newMap.updateCord(myShip);
             }
         } else if (test == 2) {

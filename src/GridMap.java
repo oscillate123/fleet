@@ -1,4 +1,5 @@
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -103,7 +104,7 @@ public class GridMap {
 
     }
 
-    public boolean updateCord(Ship myShip) throws InterruptedException {
+    public boolean updateCord(Ship myShip) throws InterruptedException, SQLException {
         boolean returnStatement = true;
         Scanner input = new Scanner(System.in);
         int shipX = this.sqlConnection.getObjectX(myShip.objectID);

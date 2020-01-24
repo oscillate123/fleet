@@ -113,9 +113,11 @@ public class SuppFunc {
                 }
             }
 
-            Scanner fittkuk = new Scanner(System.in);
-            print_string("VILL DU LADDA IN EN TILL ORDER?!?!??!?!?!?! YES/NO");
-            continueOrder = fittkuk.nextLine();
+            Scanner tempScan = new Scanner(System.in); // apparently it doesn't work using xyz.nextLine() twice, therefor we create a new one.
+            print_string("Do you want to queue for more orders? Type 'no' to start shipping!");
+            continueOrder = tempScan.nextLine();
+
+            if (continueOrder.equals(stopp)) { tempScan.close(); }
 
             unOrLoadAmount = unOrLoadAmount + containerAmount; // check if the route container drop amount is too much
             deliverySchedule.add(harborResult + "," + intToStr(containerAmount)); // adding ship info to the array
