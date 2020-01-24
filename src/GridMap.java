@@ -57,8 +57,9 @@ public class GridMap {
 
         foundDest:
         while (shipX != destX || shipY != destY) {
-            TimeUnit.MILLISECONDS.sleep(500);
             SuppFunc.cls();
+            System.out.println("On my way to " + destination);
+            this.drawMap();
             shipX = this.sqlConnection.getObjectX(ship.objectID);
             shipY = this.sqlConnection.getObjectY(ship.objectID);
             if (shipX < destX)
@@ -76,7 +77,8 @@ public class GridMap {
                         loadOrUnload = " unloading ";
                     else
                         loadOrUnload = " loading ";
-                    System.out.println("Destination reached," + loadOrUnload + Math.abs(container) + " containers.");
+                    System.out.println("\nDestination reached," + loadOrUnload + Math.abs(container) + " containers.");
+                    TimeUnit.MILLISECONDS.sleep(2000);
                     int oldSum = ship.getContainerAmount();
                     int sum = oldSum + container;
                     ship.setContainerAmount(sum); // updating container sum to the new value of
@@ -97,8 +99,6 @@ public class GridMap {
             this.sqlConnection.setObjectColumnInt("x_axis", shipX, ship.objectID);
             this.sqlConnection.setObjectColumnInt("y_axis", shipY, ship.objectID);
 
-            System.out.println("On my way to " + destination);
-            this.drawMap();
         }
 
     }
@@ -169,6 +169,7 @@ public class GridMap {
                     myShip.setContainerAmount(newShipCont);
                     this.sqlConnection.setObjectColumnInt("container_sum", newHarbCont, harbor);
                     System.out.println("Loaded " + loadAmount + " containers onto " + myShip.objectID + " from the harbor.");
+                    TimeUnit.MILLISECONDS.sleep(2000);
                     break;
                 case 2:
                     System.out.print("How many containers would you like to unload into the harbor? Enter a number: ");
@@ -182,6 +183,7 @@ public class GridMap {
                     myShip.setContainerAmount(newShipCont2);
                     this.sqlConnection.setObjectColumnInt("container_sum", newHarbCont2, harbor);
                     System.out.println("Unloaded " + unloadAmount + " containers from " + myShip.objectID + " into the harbor.");
+                    TimeUnit.MILLISECONDS.sleep(2000);
                     break;
                 case 3:
                     break;
@@ -192,7 +194,6 @@ public class GridMap {
             this.sqlConnection.setObjectColumnInt("x_axis", shipX, myShip.objectID);
             this.sqlConnection.setObjectColumnInt("y_axis", shipY, myShip.objectID);
         }
-        TimeUnit.MILLISECONDS.sleep(1500);
         return returnStatement;
     }
 }
