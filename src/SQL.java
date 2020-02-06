@@ -13,8 +13,8 @@ public class SQL {
     private final String useSSLTrue   = "?useSSL=true";
     private final String DATABASE     = "ships";
     private final String URL          = "jdbc:mysql://flottan.mysql.database.azure.com:3306/" + DATABASE + useSSLTrue;
-    private final String USERNAME     = "goow@flottan";
-    private final String PASSWORD     = "Nackademin!123";
+    private final String USERNAME     = "censored";
+    private final String PASSWORD     = "censored"; // sorry hackers, this server is deleted and not available
     private final Connection SQL;
 
     // tables
